@@ -26,4 +26,5 @@ configuration.file
 .idea
 .mvn
 target
+filehunter.iml
 
