@@ -59,22 +59,42 @@ public class IndexQuery {
         return result;
     }
 
+    public SearchResult getByUuid(String uuid) {
+        ArrayList<SearchResult> searchResults = query("id:" + uuid);
 
+        if (searchResults.size() == 0) {
+            return null;
+        }
 
-//    public ArrayList<Document> query(String q) {
-//
-//        Analyzer analyzer = new StandardAnalyzer();
-//        QueryParser parser = new QueryParser(field, analyzer);
-//
-//        Query query = null;
-//        try {
-//            query = parser.parse(q);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//
-//        searcher.search(query, 50);
-//    }
+        return searchResults.get(0);
+    }
+
+    public ArrayList<SearchResult> query(String q) {
+
+        ArrayList<SearchResult> result = new ArrayList<>();
+        if (searcher == null) {
+            return result;
+        }
+        try {
+            Analyzer analyzer = new StandardAnalyzer();
+            QueryParser parser = new QueryParser("path", analyzer);
+
+            Query query = parser.parse(q);
+            TopDocs hits = searcher.search(query, 100);
+            for(ScoreDoc scoreDoc : hits.scoreDocs) {
+                Document doc = searcher.doc(scoreDoc.doc);
+
+                SearchResult sr = new SearchResult(doc.get("id"), doc.get("path"));
+                result.add(sr);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 
 
 }

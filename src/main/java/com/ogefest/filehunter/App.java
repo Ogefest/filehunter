@@ -31,13 +31,17 @@ public class App {
 
     }
 
-    public void start() {
+    public Configuration getConfiguration() {
+        return conf;
+    }
+
+    public void reindex() {
         ArrayList<Directory> dirs = conf.getDirectories();
         for (Directory d : dirs) {
             addTask(new IndexStructure(d, indexStorage, indexQuery));
         }
 
-        indexStorage.finish();
+//        indexStorage.finish();
     }
 
     public void addTask(Task t) {
@@ -50,6 +54,14 @@ public class App {
             t.run();
         }
         tasks.clear();
+    }
+
+    public ArrayList<SearchResult> search(String query) {
+        return indexQuery.query(query);
+    }
+
+    public SearchResult getByUuid(String uuid) {
+        return indexQuery.getByUuid(uuid);
     }
 
 }

@@ -112,7 +112,7 @@ public class IndexStructure implements Task {
         }
 
         Document doc = new Document();
-        String docUUID = UUID.nameUUIDFromBytes(path.toAbsolutePath().toString().getBytes()).toString();
+        String docUUID = UUID.nameUUIDFromBytes(path.toAbsolutePath().toString().getBytes()).toString().replace("-", "");
         doc.add(new StringField("id", docUUID, Field.Store.YES));
         doc.add(new TextField("path", path.toAbsolutePath().toString(), Field.Store.YES));
         doc.add(new LongPoint("last_modified", attrs.lastModifiedTime().toMillis()));
