@@ -54,21 +54,18 @@ public class IndexStructure implements Task {
         if (Files.isDirectory(path)) {
             try {
                 Files.walkFileTree(path, new SimpleFileVisitor<>() {
+
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                        proceedPath(dir, attrs);
+
+                        return FileVisitResult.CONTINUE;
+                    }
+
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        try {
-                            Document doc = getDocumentFromPath(file, attrs);
+                        proceedPath(file, attrs);
 
-                            String fpath = file.toAbsolutePath().toString();
-                            String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString();
-
-                            indexStorage.addDocument(docUUID, doc);
-                            if (indexed.containsKey(docUUID)) {
-                                indexed.remove(docUUID);
-                            }
-                        } catch (IOException ignore) {
-                            // don't index files that can't be read.
-                        }
                         return FileVisitResult.CONTINUE;
                     }
 
@@ -84,6 +81,22 @@ public class IndexStructure implements Task {
             } catch (AccessDeniedException e) {
                 // ignore
             }
+        }
+    }
+
+    private void proceedPath(Path path, BasicFileAttributes attrs) {
+        Document doc = getDocumentFromPath(path, attrs);
+
+        String fpath = path.toAbsolutePath().toString();
+        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString();
+
+        try {
+            indexStorage.addDocument(docUUID, doc);
+        } catch (IOException e) {
+            // ignore access to file/dir
+        }
+        if (indexed.containsKey(docUUID)) {
+            indexed.remove(docUUID);
         }
     }
 
@@ -110,8 +123,6 @@ public class IndexStructure implements Task {
         doc.add(new StringField("type", attrs.isDirectory() ? "d" : "f", Field.Store.YES));
         doc.add(new LongPoint("size", attrs.size()));
         doc.add(new StringField("indexname", directory.getName(), Field.Store.YES));
-
-
 
         return doc;
     }
