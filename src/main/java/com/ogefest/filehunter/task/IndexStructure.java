@@ -1,8 +1,8 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.Directory;
-import com.ogefest.filehunter.IndexQuery;
-import com.ogefest.filehunter.IndexStorage;
+import com.ogefest.filehunter.IndexRead;
+import com.ogefest.filehunter.IndexWrite;
 import org.apache.lucene.document.*;
 
 import java.io.IOException;
@@ -15,20 +15,20 @@ import java.util.UUID;
 
 public class IndexStructure implements Task {
 
-    private IndexStorage indexStorage;
-    private IndexQuery indexQuery;
+    private IndexWrite indexStorage;
+    private IndexRead indexRead;
     private Directory directory;
 
     private HashMap<String, String> fsStructure = new HashMap<>();
     private HashMap<String, String> indexed = new HashMap<>();
 
-    public IndexStructure(Directory directory, IndexStorage indexWriter, IndexQuery indexQuery) {
+    public IndexStructure(Directory directory, IndexWrite indexWriter, IndexRead indexRead) {
         this.indexStorage = indexWriter;
-        this.indexQuery = indexQuery;
+        this.indexRead = indexRead;
         this.directory = directory;
 
-        if (indexQuery != null) {
-            ArrayList<String> indexedPaths = indexQuery.getAllForIndex(directory.getName());
+        if (indexRead != null) {
+            ArrayList<String> indexedPaths = indexRead.getAllForIndex(directory.getName());
             for (String s : indexedPaths) {
                 indexed.put(s, "1");
             }
@@ -48,6 +48,8 @@ public class IndexStructure implements Task {
                 e.printStackTrace();
             }
         }
+        indexRead.closeIndex();;
+        indexStorage.closeIndex();
     }
 
     private void indexPath(Path path) throws IOException {
@@ -93,7 +95,7 @@ public class IndexStructure implements Task {
         try {
             indexStorage.addDocument(docUUID, doc);
         } catch (IOException e) {
-            // ignore access to file/dir
+            // ignore access error to file/dir
         }
         if (indexed.containsKey(docUUID)) {
             indexed.remove(docUUID);

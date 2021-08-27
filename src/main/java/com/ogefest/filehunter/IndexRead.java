@@ -12,20 +12,33 @@ import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
 
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class IndexQuery {
+public class IndexRead {
 
     private IndexReader reader;
     private IndexSearcher searcher;
+    private Configuration conf;
 
-    public IndexQuery(String storagePath) throws IOException {
+    public IndexRead(Configuration conf) {
+        this.conf = conf;
         try {
-            reader = DirectoryReader.open(FSDirectory.open(Paths.get(storagePath)));
+            reader = DirectoryReader.open(FSDirectory.open(Paths.get(conf.getValue("storage.directory"))));
             searcher = new IndexSearcher(reader);
         } catch (IndexNotFoundException e) {
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeIndex() {
+        try {
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

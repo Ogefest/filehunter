@@ -1,6 +1,7 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
+import com.ogefest.filehunter.IndexRead;
 import com.ogefest.filehunter.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -22,18 +24,24 @@ public class SearchController {
 
     @GetMapping("/search")
     public List<SearchResult> getSearchResult(@RequestParam("q") String query) {
-        return app.search(query);
+        IndexRead ir = app.getIndexForRead();
+        ArrayList<SearchResult> result = ir.query(query);
+        ir.closeIndex();
+
+        return result;
     }
 
     @GetMapping("/download/{uuid}")
     public ResponseEntity<FileSystemResource> getFile(@PathVariable("uuid") String uuid) {
 
-        SearchResult res = app.getByUuid(uuid);
+        IndexRead ir = app.getIndexForRead();
+        SearchResult res = ir.getByUuid(uuid);
         if (res == null) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "file not found"
             );
         }
+        ir.closeIndex();
 
         File file = new File(res.getPath());
         long fileLength = file.length(); // this is ok, but see note below
