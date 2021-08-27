@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-public class IndexController {
+public class DirectoryController {
 
     @Autowired
     private App app;
 
-    @GetMapping("/index")
-    public List<Directory> getAllIndexes() {
+    @GetMapping("/directory/list")
+    public List<Directory> getAllDirectories() {
         return app.getConfiguration().getDirectories();
     }
 
-    @PostMapping("/reindex")
+    @PostMapping("/directory/reindex")
     public void reindexAllDirectories() {
         app.reindex();
     }

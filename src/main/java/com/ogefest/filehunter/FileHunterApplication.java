@@ -21,7 +21,6 @@ public class FileHunterApplication {
 		app = new App();
 //		app.start();
 
-		System.out.println("System");
 		SpringApplication.run(FileHunterApplication.class, args);
 	}
 

@@ -12,22 +12,32 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-public class IndexStorage {
+public class IndexWrite {
 
     IndexWriter writer;
     long indexCounter = 0;
 
-    public IndexStorage(String storagePath) throws IOException {
-        Analyzer analyzer = new StandardAnalyzer();
-        FSDirectory storage = FSDirectory.open(Paths.get(storagePath));
+    private Configuration conf;
 
-        IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
-        iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+    public IndexWrite(Configuration conf) {
 
-        writer = new IndexWriter(storage, iwc);
+        this.conf = conf;
+
+        try {
+
+            Analyzer analyzer = new StandardAnalyzer();
+            FSDirectory storage = FSDirectory.open(Paths.get(conf.getValue("storage.directory")));
+
+            IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
+            iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+
+            writer = new IndexWriter(storage, iwc);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void finish() {
+    public void closeIndex() {
         try {
             writer.commit();
             writer.close();

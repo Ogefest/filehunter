@@ -11,8 +11,6 @@ import java.util.ArrayList;
 public class App {
 
     private ArrayList<Task> tasks = new ArrayList<Task>();
-    private IndexQuery indexQuery;
-    private IndexStorage indexStorage;
     private Configuration conf;
     private Logger logger = LoggerFactory.getLogger(App.class);
 
@@ -20,14 +18,13 @@ public class App {
 
         try {
             conf = new Configuration("configuration.file");
-            indexStorage = new IndexStorage(conf.getValue("storage.directory"));
-            indexQuery = new IndexQuery(conf.getValue("storage.directory"));
+//            indexStorage = new IndexWrite(conf);
+//            indexRead = new IndexRead(conf.getValue("storage.directory"));
         } catch (IOException e) {
             logger.error("Unable to read file " + e.getMessage());
             e.printStackTrace();
             return;
         }
-
 
     }
 
@@ -38,10 +35,9 @@ public class App {
     public void reindex() {
         ArrayList<Directory> dirs = conf.getDirectories();
         for (Directory d : dirs) {
-            addTask(new IndexStructure(d, indexStorage, indexQuery));
+            addTask(new IndexStructure(d, getIndexForWrite(), getIndexForRead()));
         }
 
-//        indexStorage.finish();
     }
 
     public void addTask(Task t) {
@@ -56,12 +52,12 @@ public class App {
         tasks.clear();
     }
 
-    public ArrayList<SearchResult> search(String query) {
-        return indexQuery.query(query);
+    public IndexWrite getIndexForWrite() {
+        return new IndexWrite(conf);
     }
 
-    public SearchResult getByUuid(String uuid) {
-        return indexQuery.getByUuid(uuid);
+    public IndexRead getIndexForRead() {
+        return new IndexRead(conf);
     }
 
 }

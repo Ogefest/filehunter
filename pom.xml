@@ -45,6 +45,13 @@
 			<version>8.9.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.5.10</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
