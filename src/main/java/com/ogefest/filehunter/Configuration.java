@@ -25,7 +25,7 @@ public class Configuration {
         return data.get(key);
     }
 
-    public ArrayList<Directory> getDirectories() {
+    public ArrayList<Directory> getDirectoriesFromConfig() {
 
         ArrayList<Directory> result = new ArrayList<>();
 

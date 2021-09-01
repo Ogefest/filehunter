@@ -1,8 +1,10 @@
 package com.ogefest.filehunter;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-public class Directory {
+public class Directory implements Serializable {
     private String name;
     private ArrayList<String> path = new ArrayList<>();
     private ArrayList<String> ignorePath = new ArrayList<>();
@@ -12,8 +14,10 @@ public class Directory {
     private String indexMode = "full";
     private int hashSize = 0;
     private int intervalUpdateStructure = 3600;
-    private int intervalExtractMetadata = 7200;
+    private int intervalUpdateMetadata = 7200;
     private boolean extractMetadata = true;
+    private LocalDateTime lastStructureIndexed;
+    private LocalDateTime lastMetadataIndexed;
 
     public ArrayList<String> getPath() {
         return path;
@@ -87,12 +91,12 @@ public class Directory {
         this.intervalUpdateStructure = intervalUpdateStructure;
     }
 
-    public int getIntervalExtractMetadata() {
-        return intervalExtractMetadata;
+    public int getIntervalUpdateMetadata() {
+        return intervalUpdateMetadata;
     }
 
-    public void setIntervalExtractMetadata(int intervalExtractMetadata) {
-        this.intervalExtractMetadata = intervalExtractMetadata;
+    public void setIntervalUpdateMetadata(int intervalUpdateMetadata) {
+        this.intervalUpdateMetadata = intervalUpdateMetadata;
     }
 
     public boolean isExtractMetadata() {
@@ -101,6 +105,22 @@ public class Directory {
 
     public void setExtractMetadata(boolean extractMetadata) {
         this.extractMetadata = extractMetadata;
+    }
+
+    public LocalDateTime getLastStructureIndexed() {
+        return lastStructureIndexed;
+    }
+
+    public void setLastStructureIndexed(LocalDateTime lastStructureIndexed) {
+        this.lastStructureIndexed = lastStructureIndexed;
+    }
+
+    public LocalDateTime getLastMetadataIndexed() {
+        return lastMetadataIndexed;
+    }
+
+    public void setLastMetadataIndexed(LocalDateTime lastMetadataIndexed) {
+        this.lastMetadataIndexed = lastMetadataIndexed;
     }
 
     public Directory() {
