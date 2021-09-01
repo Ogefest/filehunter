@@ -35,6 +35,9 @@ public class IndexRead {
     }
 
     public void closeIndex() {
+        if (reader == null) {
+            return;
+        }
         try {
             reader.close();
         } catch (IOException e) {

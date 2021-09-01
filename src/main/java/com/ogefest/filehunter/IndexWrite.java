@@ -38,6 +38,9 @@ public class IndexWrite {
     }
 
     public void closeIndex() {
+        if (writer == null) {
+            return;
+        }
         try {
             writer.commit();
             writer.close();
