@@ -15,11 +15,10 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @Path("/search")
-public class SearchDirectory {
+public class SearchController {
 
     @Inject
     App app;
-
 
     @GET
     public ArrayList<SearchResult> search(@QueryParam("q") String query) {
