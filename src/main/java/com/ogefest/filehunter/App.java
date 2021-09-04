@@ -56,6 +56,7 @@ public class App {
 
         for(Task t : todo) {
             LOG.info("Task " + t.getClass().getName() + " started");
+            t.setApp(this);
             t.run();
             LOG.info("Task " + t.getClass().getName() + " finished");
         }
