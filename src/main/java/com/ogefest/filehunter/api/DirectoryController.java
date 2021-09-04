@@ -3,6 +3,7 @@ package com.ogefest.filehunter.api;
 import com.ogefest.filehunter.App;
 import com.ogefest.filehunter.Directory;
 import com.ogefest.filehunter.DirectoryStorage;
+import com.ogefest.filehunter.IndexWrite;
 import com.ogefest.filehunter.task.IndexStructure;
 
 import javax.ws.rs.*;
@@ -80,7 +81,7 @@ public class DirectoryController {
     @DELETE
     @Path("/remove/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Directory> remove(String name) {
+    public List<Directory> remove(@PathParam("name") String name) {
         DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
 
         Directory d = storage.getByName(name);
@@ -89,6 +90,9 @@ public class DirectoryController {
         }
 
         storage.removeByName(name);
+        IndexWrite iw = new IndexWrite(app.getConfiguration());
+        iw.deleteDocumentByDirectoryName(name);
+        iw.closeIndex();
 
         return storage.getDirectories();
     }
