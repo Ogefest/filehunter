@@ -77,4 +77,13 @@ public class IndexWrite {
         }
     }
 
+    public void deleteDocumentByDirectoryName(String name) {
+        try {
+            writer.deleteDocuments(new Term("indexname", name));
+            writer.commit();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
