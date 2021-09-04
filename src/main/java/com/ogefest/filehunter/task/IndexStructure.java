@@ -1,12 +1,10 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.App;
-import com.ogefest.filehunter.Directory;
-import com.ogefest.filehunter.IndexRead;
-import com.ogefest.filehunter.IndexWrite;
+import com.ogefest.filehunter.*;
 import org.apache.lucene.document.*;
 import org.jboss.logging.Logger;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -16,7 +14,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
-public class IndexStructure implements Task {
+public class IndexStructure extends Task {
 
     private IndexWrite indexStorage;
     private IndexRead indexRead;
@@ -56,6 +54,9 @@ public class IndexStructure implements Task {
         indexRead.closeIndex();
         indexStorage.closeIndex();
         directory.setLastStructureIndexed(LocalDateTime.now());
+        DirectoryStorage directoryStorage = new DirectoryStorage(getApp().getConfiguration());
+        directoryStorage.setDirectory(directory);
+
     }
 
     private void indexPath(Path path) throws IOException {
