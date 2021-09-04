@@ -31,6 +31,8 @@ public class DirectoryStorage {
     public void removeByName(String name) {
         Directory d = getByName(name);
         directories.remove(d);
+
+        // @TODO Remove documents from index
     }
 
     public void setDirectory(Directory dir) {
