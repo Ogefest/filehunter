@@ -67,7 +67,7 @@ public class IndexStructure extends Task {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                         proceedPath(dir, attrs);
-                        LOG.info("Index directory " + dir.toAbsolutePath().toString());
+//                        LOG.info("Index directory " + dir.toAbsolutePath().toString());
 
                         return FileVisitResult.CONTINUE;
                     }
