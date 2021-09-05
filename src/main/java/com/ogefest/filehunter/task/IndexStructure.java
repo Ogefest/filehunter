@@ -25,9 +25,9 @@ public class IndexStructure extends Task {
 
     private static final Logger LOG = Logger.getLogger(IndexStructure.class);
 
-    public IndexStructure(Directory directory, IndexWrite indexWriter, IndexRead indexRead) {
-        this.indexStorage = indexWriter;
-        this.indexRead = indexRead;
+    public IndexStructure(Directory directory) {
+//        this.indexStorage = indexWriter;
+//        this.indexRead = indexRead;
         this.directory = directory;
 
         if (indexRead != null) {
@@ -40,6 +40,9 @@ public class IndexStructure extends Task {
 
     @Override
     public void run() {
+        indexStorage = getApp().getIndexForWrite();
+        indexRead = getApp().getIndexForRead();
+
         for (String path : directory.getPath()) {
             try {
                 indexPath(Paths.get(path));

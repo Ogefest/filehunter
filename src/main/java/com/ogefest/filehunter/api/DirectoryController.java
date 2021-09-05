@@ -36,7 +36,7 @@ public class DirectoryController {
         ArrayList<Directory> dirs = storage.getDirectories();
 
         for (Directory d : dirs) {
-            app.addTask(new IndexStructure(d, app.getIndexForWrite(), app.getIndexForRead()));
+            app.addTask(new IndexStructure(d));
         }
     }
 
