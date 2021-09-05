@@ -100,7 +100,7 @@ public class IndexRead {
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
 
-                SearchResult sr = new SearchResult(doc.get("id"), doc.get("path"));
+                SearchResult sr = new SearchResult(doc.get("id"), doc.get("path"), doc.get("name"));
                 result.add(sr);
             }
         } catch (IOException e) {
