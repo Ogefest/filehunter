@@ -101,7 +101,8 @@ public class IndexStructure extends Task {
         Document doc = getDocumentFromPath(path, attrs);
 
         String fpath = path.toAbsolutePath().toString();
-        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString();
+        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString().replace("-", "");
+
 
         try {
             indexStorage.addDocument(docUUID, doc);
