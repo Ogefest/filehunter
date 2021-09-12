@@ -63,6 +63,19 @@
       <artifactId>lucene-queryparser</artifactId>
       <version>8.9.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-common</artifactId>
+      <version>8.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-queries</artifactId>
+      <version>8.9.0</version>
+    </dependency>
+
+
     <dependency>
       <groupId>org.ini4j</groupId>
       <artifactId>ini4j</artifactId>
@@ -82,7 +95,26 @@
       <artifactId>quarkus-smallrye-openapi</artifactId>
     </dependency>
 
+
+
 <!--    <dependency>-->
+<!--      <groupId>io.quarkus</groupId>-->
+<!--      <artifactId>quarkus-resteasy-reactive-jackson</artifactId>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>io.quarkus</groupId>-->
+<!--      <artifactId>quarkus-vertx</artifactId>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>io.smallrye.reactive</groupId>-->
+<!--      <artifactId>smallrye-mutiny-vertx-web-client</artifactId>-->
+<!--    </dependency>-->
+
+
+
+
+
+    <!--    <dependency>-->
 <!--      <groupId>io.quarkus</groupId>-->
 <!--      <artifactId>quarkus-resteasy-reactive</artifactId>-->
 <!--    </dependency>-->

@@ -32,7 +32,7 @@ public class DirectoryStorage {
         Directory d = getByName(name);
         directories.remove(d);
 
-        // @TODO Remove documents from index
+        saveSession();
     }
 
     public void setDirectory(Directory dir) {

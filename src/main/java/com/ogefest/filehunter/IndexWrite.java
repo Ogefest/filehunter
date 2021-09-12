@@ -1,7 +1,9 @@
 package com.ogefest.filehunter;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -11,6 +13,7 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 public class IndexWrite {
 
@@ -25,7 +28,8 @@ public class IndexWrite {
 
         try {
 
-            Analyzer analyzer = new StandardAnalyzer();
+            Analyzer analyzer2 = new StandardAnalyzer();
+            Analyzer analyzer = FHAnalyzer.get();
             FSDirectory storage = FSDirectory.open(Paths.get(conf.getValue("storage.directory")));
 
             IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
@@ -51,6 +55,10 @@ public class IndexWrite {
 
     public void addDocument(String id, Document doc) throws IOException {
         writer.updateDocument(new Term("id", id), doc);
+
+
+        List<String> res = analyze(doc.get("path"), FHAnalyzer.get());
+
         indexCounter++;
         if (indexCounter % 1000 == 0) {
             writer.commit();
@@ -84,6 +92,17 @@ public class IndexWrite {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<String> analyze(String text, Analyzer analyzer) throws IOException{
+        List<String> result = new ArrayList<String>();
+        TokenStream tokenStream = analyzer.tokenStream("path", text);
+        CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
+        tokenStream.reset();
+        while(tokenStream.incrementToken()) {
+            result.add(attr.toString());
+        }
+        return result;
     }
 
 }
