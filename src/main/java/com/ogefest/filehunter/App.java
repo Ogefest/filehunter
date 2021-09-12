@@ -22,17 +22,7 @@ public class App {
     private Configuration conf;
 
     public App() {
-
-        try {
-            String configPath = "/home/lg/dev/workspace/filehunter-quarkus/configuration.file";
-
-            LOG.info("Load configuration from " + configPath);
-            conf = new Configuration(configPath);
-        } catch (IOException e) {
-            LOG.error("Unable to read configuration file " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
+        conf = new Configuration();
     }
 
     public Configuration getConfiguration() {

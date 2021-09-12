@@ -56,6 +56,11 @@ public class DirectoryStorage {
     private String getSessionDbPath() {
         String path = conf.getValue("storage.directory") + File.separator + directorySessionFile;
 
+        File f = new File(path);
+        if (!f.getParentFile().exists()) {
+            f.getParentFile().mkdirs();
+        }
+
         return path;
     }
 
