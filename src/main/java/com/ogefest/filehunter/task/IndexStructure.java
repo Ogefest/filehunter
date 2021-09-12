@@ -26,8 +26,7 @@ public class IndexStructure extends Task {
     private static final Logger LOG = Logger.getLogger(IndexStructure.class);
 
     public IndexStructure(Directory directory) {
-//        this.indexStorage = indexWriter;
-//        this.indexRead = indexRead;
+
         this.directory = directory;
 
         if (indexRead != null) {
@@ -100,9 +99,25 @@ public class IndexStructure extends Task {
     private void proceedPath(Path path, BasicFileAttributes attrs) {
         Document doc = getDocumentFromPath(path, attrs);
 
+        /*
+        skip if extension in path exists in directory ignore extensions
+         */
+        if (directory.getIgnoreExtension().contains(doc.get("ext"))) {
+            return;
+        }
+        for (String pathToCheck : directory.getIgnorePath()) {
+            if (doc.get("path").indexOf(pathToCheck) == 0) {
+                return;
+            }
+        }
+        for (String patternToCheck : directory.getIgnorePhrase()) {
+            if (doc.get("path").indexOf(patternToCheck) != -1) {
+                return;
+            }
+        }
+
         String fpath = path.toAbsolutePath().toString();
         String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString().replace("-", "");
-
 
         try {
             indexStorage.addDocument(docUUID, doc);
