@@ -6,6 +6,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexNotFoundException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.*;
@@ -54,7 +55,8 @@ public class IndexRead {
 
         try {
 //            Query query = new MatchAllDocsQuery();
-            Analyzer analyzer = new StandardAnalyzer();
+            Analyzer analyzer2 = new StandardAnalyzer();
+            Analyzer analyzer = FHAnalyzer.get();
             QueryParser parser = new QueryParser("path", analyzer);
 //            QueryParser parser = new QueryParser("path", analyzer);
 
@@ -93,14 +95,17 @@ public class IndexRead {
         }
         try {
             Analyzer analyzer = new StandardAnalyzer();
+
             QueryParser parser = new QueryParser("path", analyzer);
+            parser.setDefaultOperator(QueryParser.Operator.AND);
 
             Query query = parser.parse(q);
+//            BoostQuery bq = new BoostQuery(query);
             TopDocs hits = searcher.search(query, 100);
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
 
-                SearchResult sr = new SearchResult(doc.get("id"), doc.get("path"), doc.get("name"));
+                SearchResult sr = new SearchResult(doc);
                 result.add(sr);
             }
         } catch (IOException e) {

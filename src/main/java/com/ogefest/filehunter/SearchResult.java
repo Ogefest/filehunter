@@ -1,20 +1,32 @@
 package com.ogefest.filehunter;
 
+import org.apache.lucene.document.Document;
+
 public class SearchResult {
 
-    private String uuid;
-    private String path;
+    private String uuid = "";
+    private String path = "";
+    private String type = "";
+    private long size = 0;
+    private String ext = "";
+    private String indexname = "";
+    private String name = "";
 
-    public String getName() {
-        return name;
+    public SearchResult(Document doc) {
+        this.uuid = doc.get("uuid");
+        this.path = doc.get("path");
+        this.name = doc.get("name");
+        this.type = doc.get("type");
+        if (doc.get("size") != null) {
+            this.size = Long.parseLong(doc.get("size"));
+        }
+
+        this.ext = doc.get("ext");
+        this.indexname = doc.get("indexname");
     }
 
-    private String name;
-
-    public SearchResult(String uuid, String path, String name) {
-        this.uuid = uuid;
-        this.path = path;
-        this.name = name;
+    public String getType() {
+        return type;
     }
 
     public String getPath() {
@@ -25,5 +37,19 @@ public class SearchResult {
         return uuid;
     }
 
+    public long getSize() {
+        return size;
+    }
 
+    public String getExt() {
+        return ext;
+    }
+
+    public String getIndexname() {
+        return indexname;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
