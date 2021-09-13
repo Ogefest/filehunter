@@ -1,13 +1,21 @@
 package com.ogefest.filehunter;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class DirectoryStorage {
 
     private ArrayList<Directory> directories = new ArrayList<>();
     private Configuration conf;
-    private String directorySessionFile = "session.db";
+    private String directorySessionFile = "index-configuration.json";
 
     public DirectoryStorage(Configuration conf) {
         this.conf = conf;
@@ -66,18 +74,21 @@ public class DirectoryStorage {
 
     private void loadSession() {
 
-        FileInputStream streamIn = null;
-        ObjectInputStream objectinputstream = null;
         try {
-            streamIn = new FileInputStream(getSessionDbPath());
-            objectinputstream = new ObjectInputStream(streamIn);
-            directories = (ArrayList<Directory>) objectinputstream.readObject();
-        } catch (FileNotFoundException e) {
+            File f = new File(getSessionDbPath());
+            if (!f.exists()) {
+                return;
+            }
+            Path configurationPath = Path.of(getSessionDbPath());
+            String jsonString = Files.readString(configurationPath, StandardCharsets.UTF_8);
+
+            List<Directory> tmp = Arrays.asList(new GsonBuilder().create().fromJson(jsonString, Directory[].class));
+            directories.addAll(tmp);
+
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
+
 
     }
 
@@ -85,9 +96,13 @@ public class DirectoryStorage {
 
         FileOutputStream fout = null;
         try {
+
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String json = gson.toJson(directories);
+
             fout = new FileOutputStream(getSessionDbPath());
-            ObjectOutputStream oos = new ObjectOutputStream(fout);
-            oos.writeObject(directories);
+            fout.write(json.getBytes(StandardCharsets.UTF_8));
+            fout.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

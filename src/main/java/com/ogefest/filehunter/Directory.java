@@ -2,9 +2,10 @@ package com.ogefest.filehunter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class Directory implements Serializable {
+public class Directory {
     private String name;
     private ArrayList<String> path = new ArrayList<>();
     private ArrayList<String> ignorePath = new ArrayList<>();
@@ -16,8 +17,8 @@ public class Directory implements Serializable {
     private int intervalUpdateStructure = 3600;
     private int intervalUpdateMetadata = 7200;
     private boolean extractMetadata = true;
-    private LocalDateTime lastStructureIndexed;
-    private LocalDateTime lastMetadataIndexed;
+    private String lastStructureIndexed;
+    private String lastMetadataIndexed;
 
     public ArrayList<String> getPath() {
         return path;
@@ -108,19 +109,27 @@ public class Directory implements Serializable {
     }
 
     public LocalDateTime getLastStructureIndexed() {
-        return lastStructureIndexed;
+        if (lastStructureIndexed == null) {
+            return null;
+        }
+        return LocalDateTime.parse(lastStructureIndexed, DateTimeFormatter.ISO_DATE_TIME);
+//        return lastStructureIndexed;
     }
 
     public void setLastStructureIndexed(LocalDateTime lastStructureIndexed) {
-        this.lastStructureIndexed = lastStructureIndexed;
+        this.lastStructureIndexed = lastStructureIndexed.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
     public LocalDateTime getLastMetadataIndexed() {
-        return lastMetadataIndexed;
+        if (lastMetadataIndexed == null) {
+            return null;
+        }
+        return LocalDateTime.parse(lastMetadataIndexed, DateTimeFormatter.ISO_DATE_TIME);
+//        return lastMetadataIndexed;
     }
 
     public void setLastMetadataIndexed(LocalDateTime lastMetadataIndexed) {
-        this.lastMetadataIndexed = lastMetadataIndexed;
+        this.lastMetadataIndexed = lastMetadataIndexed.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
     public Directory() {
