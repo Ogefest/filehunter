@@ -8,6 +8,7 @@ import com.ogefest.filehunter.task.Task;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import io.quarkus.scheduler.Scheduled;
 import org.jboss.logging.Logger;
@@ -18,7 +19,7 @@ import io.quarkus.scheduler.ScheduledExecution;
 public class App {
 
     private static final Logger LOG = Logger.getLogger(App.class);
-    private ArrayList<Task> tasks = new ArrayList<Task>();
+    private ArrayList<Task> tasks = new ArrayList<>();
     private Configuration conf;
 
     public App() {
@@ -31,6 +32,16 @@ public class App {
 
     public void addTask(Task t) {
         tasks.add(t);
+    }
+
+    @Scheduled(every="100s")
+    protected synchronized void checkRecurringIndexing() {
+        DirectoryStorage storage = new DirectoryStorage(conf);
+        for (Directory d : storage.getDirectories()) {
+            if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
+                addTask(new IndexStructure(d));
+            }
+        }
     }
 
     @Scheduled(every="3s")

@@ -110,7 +110,7 @@ public class Directory {
 
     public LocalDateTime getLastStructureIndexed() {
         if (lastStructureIndexed == null) {
-            return null;
+            return LocalDateTime.of(2000,1,1,0,0);
         }
         return LocalDateTime.parse(lastStructureIndexed, DateTimeFormatter.ISO_DATE_TIME);
 //        return lastStructureIndexed;
@@ -122,7 +122,7 @@ public class Directory {
 
     public LocalDateTime getLastMetadataIndexed() {
         if (lastMetadataIndexed == null) {
-            return null;
+            return LocalDateTime.of(2000,1,1,0,0);
         }
         return LocalDateTime.parse(lastMetadataIndexed, DateTimeFormatter.ISO_DATE_TIME);
 //        return lastMetadataIndexed;
