@@ -13,7 +13,7 @@ public class SearchResult {
     private String name = "";
 
     public SearchResult(Document doc) {
-        this.uuid = doc.get("uuid");
+        this.uuid = doc.get("id");
         this.path = doc.get("path");
         this.name = doc.get("name");
         this.type = doc.get("type");
