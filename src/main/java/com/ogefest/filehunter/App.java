@@ -20,6 +20,7 @@ public class App {
 
     private static final Logger LOG = Logger.getLogger(App.class);
     private ArrayList<Task> tasks = new ArrayList<>();
+    private Task currentTask;
     private Configuration conf;
 
     public App() {
@@ -34,7 +35,7 @@ public class App {
         tasks.add(t);
     }
 
-    @Scheduled(every="100s")
+    @Scheduled(every="10s")
     protected synchronized void checkRecurringIndexing() {
         DirectoryStorage storage = new DirectoryStorage(conf);
         for (Directory d : storage.getDirectories()) {
@@ -56,10 +57,14 @@ public class App {
         tasks.clear();
 
         for(Task t : todo) {
+            currentTask = t;
             LOG.info("Task " + t.getClass().getName() + " started");
-            t.setApp(this);
-            t.run();
+
+            currentTask.setApp(this);
+            currentTask.run();
+
             LOG.info("Task " + t.getClass().getName() + " finished");
+            currentTask = null;
         }
     }
 
@@ -69,6 +74,10 @@ public class App {
 
     public IndexRead getIndexForRead() {
         return new IndexRead(conf);
+    }
+
+    public Task getCurrentTaskProcessing() {
+        return currentTask;
     }
 
 }
