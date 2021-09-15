@@ -66,7 +66,7 @@ public class IndexRead {
             TopDocs hits = searcher.search(query, Integer.MAX_VALUE);
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
-                result.add(doc.get("path"));
+                result.add(doc.get("id"));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -115,6 +115,13 @@ public class IndexRead {
         }
 
         return result;
+    }
+
+    public int getNumDocs() {
+        if (reader == null) {
+            return 0;
+        }
+        return reader.numDocs();
     }
 
 

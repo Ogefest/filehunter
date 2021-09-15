@@ -9,6 +9,10 @@ public abstract class Task {
         this.app = app;
     }
 
+    public String getTaskName() {
+        return this.getClass().getCanonicalName();
+    }
+
     protected App getApp() {
         return app;
     }

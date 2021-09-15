@@ -41,6 +41,18 @@ public class DirectoryController {
     }
 
     @POST
+    @Path("/reindex/{name}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void reindexByName(@PathParam("name") String name) {
+
+        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
+        ArrayList<Directory> dirs = storage.getDirectories();
+
+        Directory d = storage.getByName(name);
+        app.addTask(new IndexStructure(d));
+    }
+
+    @POST
     @Path("/set")
     @Produces(MediaType.APPLICATION_JSON)
     public List<Directory> create(Directory newDirectory) {

@@ -23,24 +23,23 @@ public class IndexStructure extends Task {
     private HashMap<String, String> fsStructure = new HashMap<>();
     private HashMap<String, String> indexed = new HashMap<>();
 
+    private String currentDirectoryIndexing = "";
+
     private static final Logger LOG = Logger.getLogger(IndexStructure.class);
 
     public IndexStructure(Directory directory) {
-
         this.directory = directory;
-
-        if (indexRead != null) {
-            ArrayList<String> indexedPaths = indexRead.getAllForIndex(directory.getName());
-            for (String s : indexedPaths) {
-                indexed.put(s, "1");
-            }
-        }
     }
 
     @Override
     public void run() {
         indexStorage = getApp().getIndexForWrite();
         indexRead = getApp().getIndexForRead();
+
+        ArrayList<String> indexedPaths = indexRead.getAllForIndex(directory.getName());
+        for (String s : indexedPaths) {
+            indexed.put(s, "1");
+        }
 
         for (String path : directory.getPath()) {
             try {
@@ -69,6 +68,7 @@ public class IndexStructure extends Task {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                         proceedPath(dir, attrs);
+                        currentDirectoryIndexing = dir.toAbsolutePath().toString();
 //                        LOG.info("Index directory " + dir.toAbsolutePath().toString());
 
                         return FileVisitResult.CONTINUE;
@@ -99,6 +99,10 @@ public class IndexStructure extends Task {
     private void proceedPath(Path path, BasicFileAttributes attrs) {
         Document doc = getDocumentFromPath(path, attrs);
 
+        String fpath = path.toAbsolutePath().toString();
+        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString().replace("-", "");
+
+
         /*
         skip if extension in path exists in directory ignore extensions
          */
@@ -115,9 +119,6 @@ public class IndexStructure extends Task {
                 return;
             }
         }
-
-        String fpath = path.toAbsolutePath().toString();
-        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString().replace("-", "");
 
         try {
             indexStorage.addDocument(docUUID, doc);
@@ -154,6 +155,11 @@ public class IndexStructure extends Task {
         doc.add(new StringField("indexname", directory.getName(), Field.Store.YES));
 
         return doc;
+    }
+
+    @Override
+    public String getTaskName() {
+        return "Indexing " + currentDirectoryIndexing;
     }
 
 
