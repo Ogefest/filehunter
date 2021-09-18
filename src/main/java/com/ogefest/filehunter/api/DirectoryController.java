@@ -27,18 +27,18 @@ public class DirectoryController {
         return storage.getDirectories();
     }
 
-    @POST
-    @Path("/reindex")
-    @Produces(MediaType.APPLICATION_JSON)
-    public void reindex() {
-
-        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
-        ArrayList<Directory> dirs = storage.getDirectories();
-
-        for (Directory d : dirs) {
-            app.addTask(new IndexStructure(d));
-        }
-    }
+//    @POST
+//    @Path("/reindex")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public void reindex() {
+//
+//        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
+//        ArrayList<Directory> dirs = storage.getDirectories();
+//
+//        for (Directory d : dirs) {
+//            app.addTask(new IndexStructure(d));
+//        }
+//    }
 
     @POST
     @Path("/reindex/{name}")
