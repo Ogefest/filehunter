@@ -40,7 +40,7 @@ public class DownloadController {
             throw new NotFoundException();
         }
 
-        Response.ResponseBuilder response = Response.ok((Object) file);
+        Response.ResponseBuilder response = Response.ok(file);
         if (MimeUtils.hasExtension(res.getExt())) {
             response.type(MimeUtils.guessMimeTypeFromExtension(res.getExt()));
         } else {
