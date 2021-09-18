@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.util.ArrayList;
 
-@Path("/download")
+@Path("/access")
 public class DownloadController {
 
     @Inject
@@ -33,6 +33,9 @@ public class DownloadController {
         File file = new File(res.getPath());
         if (!file.isFile()) {
             throw new BadRequestException("Only file available for download");
+        }
+        if (!file.exists()) {
+            throw new NotFoundException();
         }
 
         Response.ResponseBuilder response = Response.ok((Object) file);
