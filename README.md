@@ -10,6 +10,9 @@ are stored on multiple hosts with multiple directories.
 4. Open in browser `http://<HOST_IP>:8034`
 5. Create new index with name and directory
 
+## Screenshot
+![screenshot](screenshot.png)
+
 ## FAQ
 - Is Filehunter ready and steady?
   - Nope, right now is in early development stage and probably has some bugs which might make it hard to use
