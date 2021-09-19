@@ -6,7 +6,7 @@ are stored on multiple hosts with multiple directories.
 ## Get started
 1. Download the latest version from releases in Github
 2. Create separate directory where you put binary file
-3. Run it `./filehunter`
+3. `chmod +x ./filehunter` and run it `./filehunter`
 4. Open in browser `http://<HOST_IP>:8034`
 5. Create new index with name and directory
 
