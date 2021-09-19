@@ -1,8 +1,8 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
-import com.ogefest.filehunter.Directory;
-import com.ogefest.filehunter.DirectoryStorage;
+import com.ogefest.filehunter.DirectoryIndex;
+import com.ogefest.filehunter.DirectoryIndexStorage;
 import com.ogefest.filehunter.IndexWrite;
 import com.ogefest.filehunter.task.IndexStructure;
 
@@ -13,8 +13,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-@Path("/directory")
-public class DirectoryController {
+@Path("/index")
+public class IndexController {
 
     @Inject
     App app;
@@ -22,10 +22,11 @@ public class DirectoryController {
     @GET
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Directory> hello() {
-        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
+    public List<DirectoryIndex> hello() {
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
         return storage.getDirectories();
     }
+
 
 //    @POST
 //    @Path("/reindex")
@@ -45,25 +46,25 @@ public class DirectoryController {
     @Produces(MediaType.APPLICATION_JSON)
     public void reindexByName(@PathParam("name") String name) {
 
-        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
-        ArrayList<Directory> dirs = storage.getDirectories();
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
+        ArrayList<DirectoryIndex> dirs = storage.getDirectories();
 
-        Directory d = storage.getByName(name);
+        DirectoryIndex d = storage.getByName(name);
         app.addTask(new IndexStructure(d));
     }
 
     @POST
     @Path("/set")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Directory> create(Directory newDirectory) {
+    public List<DirectoryIndex> create(DirectoryIndex newDirectoryIndex) {
 
-        if (newDirectory.getName().equals("")) {
+        if (newDirectoryIndex.getName().equals("")) {
             throw new BadRequestException("Name parameter is required");
         }
-        if (newDirectory.getPath().size() == 0) {
+        if (newDirectoryIndex.getPath().size() == 0) {
             throw new BadRequestException("Path parameter is required ");
         }
-        for (String p : newDirectory.getPath()) {
+        for (String p : newDirectoryIndex.getPath()) {
             File f = new File(p);
             if (!f.exists()) {
                 throw new BadRequestException("Path " + p + " not exists");
@@ -71,8 +72,8 @@ public class DirectoryController {
         }
 
 
-        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
-        storage.setDirectory(newDirectory);
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
+        storage.setDirectory(newDirectoryIndex);
 
         return storage.getDirectories();
     }
@@ -80,9 +81,9 @@ public class DirectoryController {
     @GET
     @Path("/get/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Directory getByName(@PathParam("name") String name) {
-        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
-        Directory result = storage.getByName(name);
+    public DirectoryIndex getByName(@PathParam("name") String name) {
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
+        DirectoryIndex result = storage.getByName(name);
         if (result == null) {
             throw new NotFoundException();
         }
@@ -93,10 +94,10 @@ public class DirectoryController {
     @DELETE
     @Path("/remove/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Directory> remove(@PathParam("name") String name) {
-        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
+    public List<DirectoryIndex> remove(@PathParam("name") String name) {
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
 
-        Directory d = storage.getByName(name);
+        DirectoryIndex d = storage.getByName(name);
         if (d == null) {
             throw new NotFoundException();
         }

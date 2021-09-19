@@ -11,24 +11,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class DirectoryStorage {
+public class DirectoryIndexStorage {
 
-    private ArrayList<Directory> directories = new ArrayList<>();
+    private ArrayList<DirectoryIndex> directories = new ArrayList<>();
     private Configuration conf;
     private String directorySessionFile = "index-configuration.json";
 
-    public DirectoryStorage(Configuration conf) {
+    public DirectoryIndexStorage(Configuration conf) {
         this.conf = conf;
 
         loadSession();
     }
 
-    public ArrayList<Directory> getDirectories() {
+    public ArrayList<DirectoryIndex> getDirectories() {
         return directories;
     }
 
-    public Directory getByName(String name) {
-        for (Directory dir : directories) {
+    public DirectoryIndex getByName(String name) {
+        for (DirectoryIndex dir : directories) {
             if (dir.getName().equals(name)) {
                 return dir;
             }
@@ -37,15 +37,15 @@ public class DirectoryStorage {
     }
 
     public void removeByName(String name) {
-        Directory d = getByName(name);
+        DirectoryIndex d = getByName(name);
         directories.remove(d);
 
         saveSession();
     }
 
-    public void setDirectory(Directory dir) {
+    public void setDirectory(DirectoryIndex dir) {
         int index = -1;
-        for (Directory d : directories) {
+        for (DirectoryIndex d : directories) {
             if (d.getName().equals(dir.getName())) {
                 index = directories.indexOf(d);
                 break;
@@ -82,7 +82,7 @@ public class DirectoryStorage {
             Path configurationPath = Path.of(getSessionDbPath());
             String jsonString = Files.readString(configurationPath, StandardCharsets.UTF_8);
 
-            List<Directory> tmp = Arrays.asList(new GsonBuilder().create().fromJson(jsonString, Directory[].class));
+            List<DirectoryIndex> tmp = Arrays.asList(new GsonBuilder().create().fromJson(jsonString, DirectoryIndex[].class));
             directories.addAll(tmp);
 
         } catch (IOException e) {

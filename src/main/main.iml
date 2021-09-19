@@ -21,5 +21,7 @@
     <orderEntry type="library" name="Maven: io.vertx:vertx-core:4.1.2" level="project" />
     <orderEntry type="library" name="Maven: io.vertx:vertx-web:4.1.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.lucene:lucene-analyzers-common:8.9.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.8" level="project" />
+    <orderEntry type="library" name="Maven: com.oracle.substratevm:svm:19.2.1" level="project" />
   </component>
 </module>
