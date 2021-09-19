@@ -5,14 +5,11 @@ import com.ogefest.filehunter.task.Task;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import io.quarkus.scheduler.Scheduled;
 import org.jboss.logging.Logger;
-import io.quarkus.scheduler.ScheduledExecution;
 
 //@ApplicationScoped
 @Singleton
@@ -37,8 +34,8 @@ public class App {
 
     @Scheduled(every="10s")
     protected synchronized void checkRecurringIndexing() {
-        DirectoryStorage storage = new DirectoryStorage(conf);
-        for (Directory d : storage.getDirectories()) {
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
+        for (DirectoryIndex d : storage.getDirectories()) {
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
                 addTask(new IndexStructure(d));
             }

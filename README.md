@@ -19,8 +19,8 @@ The application can be packaged using:
 ```shell script
 ./mvnw package
 ```
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directoryIndex.
+Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directoryIndex.
 
 If you want to build an _über-jar_, execute the following command:
 ```shell script

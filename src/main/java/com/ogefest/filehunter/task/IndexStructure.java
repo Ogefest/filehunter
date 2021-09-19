@@ -4,7 +4,6 @@ import com.ogefest.filehunter.*;
 import org.apache.lucene.document.*;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -18,7 +17,7 @@ public class IndexStructure extends Task {
 
     private IndexWrite indexStorage;
     private IndexRead indexRead;
-    private Directory directory;
+    private DirectoryIndex directoryIndex;
 
     private HashMap<String, String> fsStructure = new HashMap<>();
     private HashMap<String, String> indexed = new HashMap<>();
@@ -27,8 +26,8 @@ public class IndexStructure extends Task {
 
     private static final Logger LOG = Logger.getLogger(IndexStructure.class);
 
-    public IndexStructure(Directory directory) {
-        this.directory = directory;
+    public IndexStructure(DirectoryIndex directoryIndex) {
+        this.directoryIndex = directoryIndex;
     }
 
     @Override
@@ -36,12 +35,12 @@ public class IndexStructure extends Task {
         indexStorage = getApp().getIndexForWrite();
         indexRead = getApp().getIndexForRead();
 
-        ArrayList<String> indexedPaths = indexRead.getAllForIndex(directory.getName());
+        ArrayList<String> indexedPaths = indexRead.getAllForIndex(directoryIndex.getName());
         for (String s : indexedPaths) {
             indexed.put(s, "1");
         }
 
-        for (String path : directory.getPath()) {
+        for (String path : directoryIndex.getPath()) {
             try {
                 indexPath(Paths.get(path));
 
@@ -54,9 +53,9 @@ public class IndexStructure extends Task {
         }
         indexRead.closeIndex();
         indexStorage.closeIndex();
-        directory.setLastStructureIndexed(LocalDateTime.now());
-        DirectoryStorage directoryStorage = new DirectoryStorage(getApp().getConfiguration());
-        directoryStorage.setDirectory(directory);
+        directoryIndex.setLastStructureIndexed(LocalDateTime.now());
+        DirectoryIndexStorage directoryIndexStorage = new DirectoryIndexStorage(getApp().getConfiguration());
+        directoryIndexStorage.setDirectory(directoryIndex);
 
     }
 
@@ -106,15 +105,15 @@ public class IndexStructure extends Task {
         /*
         skip if extension in path exists in directory ignore extensions
          */
-        if (directory.getIgnoreExtension().contains(doc.get("ext"))) {
+        if (directoryIndex.getIgnoreExtension().contains(doc.get("ext"))) {
             return;
         }
-        for (String pathToCheck : directory.getIgnorePath()) {
+        for (String pathToCheck : directoryIndex.getIgnorePath()) {
             if (doc.get("path").indexOf(pathToCheck) == 0) {
                 return;
             }
         }
-        for (String patternToCheck : directory.getIgnorePhrase()) {
+        for (String patternToCheck : directoryIndex.getIgnorePhrase()) {
             if (doc.get("path").indexOf(patternToCheck) != -1) {
                 return;
             }
@@ -152,7 +151,7 @@ public class IndexStructure extends Task {
         doc.add(new StringField("ext", ext, Field.Store.YES));
         doc.add(new StringField("type", attrs.isDirectory() ? "d" : "f", Field.Store.YES));
         doc.add(new LongPoint("size", attrs.size()));
-        doc.add(new StringField("indexname", directory.getName(), Field.Store.YES));
+        doc.add(new StringField("indexname", directoryIndex.getName(), Field.Store.YES));
 
         return doc;
     }

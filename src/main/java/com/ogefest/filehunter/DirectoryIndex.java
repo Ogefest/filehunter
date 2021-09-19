@@ -5,18 +5,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class Directory {
+public class DirectoryIndex {
     private String name;
     private ArrayList<String> path = new ArrayList<>();
     private ArrayList<String> ignorePath = new ArrayList<>();
     private ArrayList<String> ignorePhrase = new ArrayList<>();
     private ArrayList<String> ignoreExtension = new ArrayList<>();
-    private int maxDepth = 20;
-    private String indexMode = "full";
-    private int hashSize = 0;
     private int intervalUpdateStructure = 3600;
-    private int intervalUpdateMetadata = 7200;
-    private boolean extractMetadata = true;
+    private boolean extractMetadata = false;
     private String lastStructureIndexed;
     private String lastMetadataIndexed;
 
@@ -60,44 +56,12 @@ public class Directory {
         this.ignoreExtension = ignoreExtension;
     }
 
-    public int getMaxDepth() {
-        return maxDepth;
-    }
-
-    public void setMaxDepth(int maxDepth) {
-        this.maxDepth = maxDepth;
-    }
-
-    public String getIndexMode() {
-        return indexMode;
-    }
-
-    public void setIndexMode(String indexMode) {
-        this.indexMode = indexMode;
-    }
-
-    public int getHashSize() {
-        return hashSize;
-    }
-
-    public void setHashSize(int hashSize) {
-        this.hashSize = hashSize;
-    }
-
     public int getIntervalUpdateStructure() {
         return intervalUpdateStructure;
     }
 
     public void setIntervalUpdateStructure(int intervalUpdateStructure) {
         this.intervalUpdateStructure = intervalUpdateStructure;
-    }
-
-    public int getIntervalUpdateMetadata() {
-        return intervalUpdateMetadata;
-    }
-
-    public void setIntervalUpdateMetadata(int intervalUpdateMetadata) {
-        this.intervalUpdateMetadata = intervalUpdateMetadata;
     }
 
     public boolean isExtractMetadata() {
@@ -132,7 +96,7 @@ public class Directory {
         this.lastMetadataIndexed = lastMetadataIndexed.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
-    public Directory() {
+    public DirectoryIndex() {
 
     }
 
