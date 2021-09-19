@@ -5,6 +5,7 @@ import com.ogefest.filehunter.DirectoryIndex;
 import com.ogefest.filehunter.DirectoryIndexStorage;
 import com.ogefest.filehunter.IndexWrite;
 import com.ogefest.filehunter.task.IndexStructure;
+import com.ogefest.filehunter.task.RemoveIndex;
 
 import javax.ws.rs.*;
 import javax.inject.Inject;
@@ -103,9 +104,7 @@ public class IndexController {
         }
 
         storage.removeByName(name);
-        IndexWrite iw = new IndexWrite(app.getConfiguration());
-        iw.deleteDocumentByDirectoryName(name);
-        iw.closeIndex();
+        app.addTask(new RemoveIndex(name));
 
         return storage.getDirectories();
     }
