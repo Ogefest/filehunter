@@ -41,6 +41,10 @@ public class IndexWrite {
         }
     }
 
+    public boolean isStorageReady() {
+        return writer != null;
+    }
+
     public void closeIndex() {
         if (writer == null) {
             return;
@@ -54,6 +58,7 @@ public class IndexWrite {
     }
 
     public void addDocument(String id, Document doc) throws IOException {
+
         writer.updateDocument(new Term("id", id), doc);
 
 
