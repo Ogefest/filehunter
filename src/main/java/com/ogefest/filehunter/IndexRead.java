@@ -46,6 +46,10 @@ public class IndexRead {
         }
     }
 
+    public boolean isStorageReady() {
+        return reader != null;
+    }
+
     public ArrayList<String> getAllForIndex(String name) {
 
         ArrayList<String> result = new ArrayList<>();

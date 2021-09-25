@@ -35,6 +35,11 @@ public class IndexStructure extends Task {
         indexStorage = getApp().getIndexForWrite();
         indexRead = getApp().getIndexForRead();
 
+        if (!indexStorage.isStorageReady() || !indexRead.isStorageReady()) {
+            LOG.info("Storage not ready");
+            return;
+        }
+
         ArrayList<String> indexedPaths = indexRead.getAllForIndex(directoryIndex.getName());
         for (String s : indexedPaths) {
             indexed.put(s, "1");
@@ -120,6 +125,14 @@ public class IndexStructure extends Task {
         }
 
         try {
+            if (directoryIndex.isExtractMetadata() && indexed.containsKey(docUUID)) {
+                SearchResult currentDocument = indexRead.getByUuid(docUUID);
+                if (currentDocument != null) {
+                    doc.removeField("metaindexed");
+                    //
+                }
+            }
+
             indexStorage.addDocument(docUUID, doc);
         } catch (IOException e) {
             // ignore access error to file/dir
@@ -144,14 +157,28 @@ public class IndexStructure extends Task {
         String docUUID = UUID.nameUUIDFromBytes(path.toAbsolutePath().toString().getBytes()).toString().replace("-", "");
         doc.add(new StringField("id", docUUID, Field.Store.YES));
         doc.add(new TextField("path", path.toAbsolutePath().toString(), Field.Store.YES));
+
         doc.add(new LongPoint("last_modified", attrs.lastModifiedTime().toMillis()));
+        doc.add(new StoredField("last_modified", attrs.lastModifiedTime().toMillis()));
+
         doc.add(new LongPoint("indexed", System.currentTimeMillis()));
+        doc.add(new StoredField("indexed", System.currentTimeMillis()));
+
         doc.add(new LongPoint("created", attrs.creationTime().toMillis()));
+        doc.add(new StoredField("created", attrs.creationTime().toMillis()));
+
+        doc.add(new LongPoint("size", attrs.size()));
+        doc.add(new StoredField("size", attrs.size()));
+
+        doc.add(new LongPoint("metaindexed", 0));
+        doc.add(new StoredField("metaindexed", 0));
+
         doc.add(new TextField("name", path.getFileName().toString(), Field.Store.YES));
         doc.add(new StringField("ext", ext, Field.Store.YES));
         doc.add(new StringField("type", attrs.isDirectory() ? "d" : "f", Field.Store.YES));
-        doc.add(new LongPoint("size", attrs.size()));
+
         doc.add(new StringField("indexname", directoryIndex.getName(), Field.Store.YES));
+
 
         return doc;
     }
