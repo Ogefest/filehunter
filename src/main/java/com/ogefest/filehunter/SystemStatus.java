@@ -1,7 +1,5 @@
 package com.ogefest.filehunter;
 
-import com.ogefest.filehunter.task.Task;
-
 public class SystemStatus {
     private long docsNumber = 0;
     private String currentTask = "";

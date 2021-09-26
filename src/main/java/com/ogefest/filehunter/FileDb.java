@@ -1,8 +1,5 @@
 package com.ogefest.filehunter;
 
-import org.apache.lucene.document.Document;
-
-import javax.swing.plaf.nimbus.State;
 import java.io.File;
 import java.sql.*;
 import java.time.ZoneId;

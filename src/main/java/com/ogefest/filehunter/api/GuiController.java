@@ -1,10 +1,8 @@
 package com.ogefest.filehunter.api;
 
 import io.vertx.ext.web.Router;
-//import io.vertx.mutiny.core.Vertx;
 
 import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 import javax.ws.rs.Path;
 
 @Path("/gui")

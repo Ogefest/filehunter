@@ -1,17 +1,6 @@
 package com.ogefest.filehunter;
 
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Tokenizer;
-import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.path.PathHierarchyTokenizerFactory;
-import org.apache.lucene.analysis.standard.*;
-//import org.apache.lucene.analysis.custom.CustomAnalyzer;
-import org.apache.lucene.analysis.LowerCaseFilter;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardTokenizer;
-
-import java.io.IOException;
-import java.nio.file.Paths;
 
 public class FHAnalyzer  {
 

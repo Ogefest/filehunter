@@ -3,12 +3,11 @@ package com.ogefest.filehunter.api;
 import com.ogefest.filehunter.App;
 import com.ogefest.filehunter.DirectoryIndex;
 import com.ogefest.filehunter.DirectoryIndexStorage;
-import com.ogefest.filehunter.IndexWrite;
 import com.ogefest.filehunter.task.IndexStructure;
 import com.ogefest.filehunter.task.RemoveIndex;
 
-import javax.ws.rs.*;
 import javax.inject.Inject;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.util.ArrayList;

@@ -6,14 +6,10 @@ import com.ogefest.filehunter.MimeUtils;
 import com.ogefest.filehunter.SearchResult;
 
 import javax.inject.Inject;
-import javax.print.attribute.standard.Media;
 import javax.ws.rs.*;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 @Path("/download")
 public class DownloadController {
