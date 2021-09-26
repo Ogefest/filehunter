@@ -37,7 +37,7 @@ public class IndexStructure extends Task {
 //        indexRead = getApp().getIndexForRead();
 
         if (!indexStorage.isStorageReady() || !indexRead.isStorageReady()) {
-            LOG.info("Storage not ready");
+            LOG.debug("Storage not ready");
             return;
         }
 
