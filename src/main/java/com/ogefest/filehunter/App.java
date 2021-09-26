@@ -40,9 +40,6 @@ public class App {
             return;
         }
 
-//        IndexWrite indexWrite = getIndexForWrite();
-//        IndexRead indexRead = getIndexForRead();
-
         DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
         for (DirectoryIndex d : storage.getDirectories()) {
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
@@ -52,24 +49,11 @@ public class App {
 
         DirectoryIndexStorage storage2 = new DirectoryIndexStorage(conf);
         for (DirectoryIndex d : storage.getDirectories()) {
-//            if (d.getLastMetadataIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
                 addTask(new IndexMetadata(d));
-//            }
         }
 
-//        indexWrite.closeIndex();
-//        indexRead.closeIndex();
     }
 
-//    @Scheduled(every="10s")
-//    protected synchronized void startMetadataIndexing() {
-//        DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
-//        for (DirectoryIndex d : storage.getDirectories()) {
-//            if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
-//                addTask(new IndexMetadata(d));
-//            }
-//        }
-//    }
 
     @Scheduled(every="3s")
     public synchronized void tasks() {
@@ -91,13 +75,13 @@ public class App {
 
         for(Task t : todo) {
             currentTask = t;
-            LOG.info("Task " + t.getClass().getName() + " started");
+            LOG.debug("Task " + t.getClass().getName() + " started");
 
             currentTask.setApp(this);
             currentTask.setIndexes(indexWrite, indexRead);
             currentTask.run();
 
-            LOG.info("Task " + t.getClass().getName() + " finished");
+            LOG.debug("Task " + t.getClass().getName() + " finished");
             currentTask = null;
         }
 

@@ -87,7 +87,7 @@ public class IndexMetadata extends Task {
         } catch (TikaException e) {
             e.printStackTrace();
         } catch (SAXException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         fileInfo.setLastMetaIndexed(LocalDateTime.now());
