@@ -12,17 +12,14 @@ public class SearchResult {
     private String indexname = "";
     private String name = "";
 
-    public SearchResult(Document doc) {
-        this.uuid = doc.get("id");
-        this.path = doc.get("path");
-        this.name = doc.get("name");
-        this.type = doc.get("type");
-        if (doc.get("size") != null) {
-            this.size = Long.parseLong(doc.get("size"));
-        }
-
-        this.ext = doc.get("ext");
-        this.indexname = doc.get("indexname");
+    public SearchResult(FileInfo finfo) {
+        uuid = finfo.getUuid();
+        path = finfo.getPath();
+        name = finfo.getName();
+        type = finfo.getType() == FileType.DIRECTORY ? "d" : "f";
+        size = finfo.getSize();
+        ext = finfo.getExt();
+        indexname = finfo.getIndexname();
     }
 
     public String getType() {

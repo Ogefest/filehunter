@@ -9,26 +9,36 @@ import java.util.*;
 
 public class Configuration {
     private String filename;
-//    private Ini ini;
-
-    public Configuration(String filename) throws IOException {
-        this.filename = filename;
-
-//        ini = new Ini();
-//        ini.load(new FileReader(filename));
-
-    }
+    private HashMap<String, String> configuration = new HashMap<>();
 
     public Configuration() {
+
+        /*
+        DEFAULT VALUES
+         */
+        configuration.put("storage.directory", new File("filehunterstorage").getAbsolutePath());
+
+        Map<String, String> envs = System.getenv();
+        for (String key : envs.keySet()) {
+            if (key.indexOf("filehunter") == 0) {
+                configuration.put(key.substring(11), envs.get(key));
+            }
+         }
+
+//        configuration.put("storage.directory", System.getenv("filehunter.storage.directory"));
+//        if (configuration.get("storage.directory") == null) {
+//            configuration.put("storage.directory", new File("filehunterstorage").getAbsolutePath());
+//        }
 
     }
 
     public String getValue(String key) {
-        HashMap<String, String> data = new HashMap<>();
-//        data.put("storage.directory", "./filehunterstorage");
-        data.put("storage.directory", new File("filehunterstorage").getAbsolutePath());
-
-        return data.get(key);
+        return configuration.get(key);
+//        HashMap<String, String> data = new HashMap<>();
+////        data.put("storage.directory", "./filehunterstorage");
+//        data.put("storage.directory", new File("filehunterstorage").getAbsolutePath());
+//
+//        return data.get(key);
     }
 
 //    public ArrayList<Directory> getDirectoriesFromConfig() {
