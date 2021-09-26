@@ -8,8 +8,9 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
-import java.io.*;
-import java.lang.reflect.Array;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;

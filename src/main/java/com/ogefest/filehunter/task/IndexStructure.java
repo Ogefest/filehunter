@@ -1,7 +1,6 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.*;
-import org.apache.lucene.document.*;
 import org.jboss.logging.Logger;
 
 import java.io.IOException;
@@ -10,8 +9,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
 
 public class IndexStructure extends Task {
 

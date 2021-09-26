@@ -1,6 +1,5 @@
 package com.ogefest.filehunter;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;

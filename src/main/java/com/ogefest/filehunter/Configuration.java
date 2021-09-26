@@ -3,9 +3,8 @@ package com.ogefest.filehunter;
 //import org.ini4j.Ini;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Configuration {
     private String filename;

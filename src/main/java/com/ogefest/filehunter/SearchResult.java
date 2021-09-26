@@ -1,7 +1,5 @@
 package com.ogefest.filehunter;
 
-import org.apache.lucene.document.Document;
-
 public class SearchResult {
 
     private String uuid = "";
