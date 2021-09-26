@@ -12,7 +12,7 @@ public class RemoveIndex extends Task {
 
     @Override
     public void run() {
-        IndexWrite iw = new IndexWrite(getApp().getConfiguration());
+        IndexWrite iw = getIndexWrite();
         iw.deleteDocumentByDirectoryName(name);
         iw.closeIndex();
     }
