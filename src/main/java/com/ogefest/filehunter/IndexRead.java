@@ -15,6 +15,7 @@ import org.apache.lucene.store.FSDirectory;
 import java.io.IOException;
 import java.io.ObjectInputFilter;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class IndexRead {
@@ -29,7 +30,7 @@ public class IndexRead {
             reader = DirectoryReader.open(FSDirectory.open(Paths.get(conf.getValue("storage.directory"))));
             searcher = new IndexSearcher(reader);
         } catch (IndexNotFoundException e) {
-
+//            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,9 +51,13 @@ public class IndexRead {
         return reader != null;
     }
 
-    public ArrayList<String> getAllForIndex(String name) {
+    public ArrayList<FileInfo> getAllForIndex(String name) {
 
-        ArrayList<String> result = new ArrayList<>();
+        /*
+        @TODO refactor this method, it can't return all documents with content
+        in some cases memory will not be enough
+         */
+        ArrayList<FileInfo> result = new ArrayList<>();
         if (searcher == null) {
             return result;
         }
@@ -70,7 +75,7 @@ public class IndexRead {
             TopDocs hits = searcher.search(query, Integer.MAX_VALUE);
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
-                result.add(doc.get("id"));
+                result.add(new FileInfo(doc));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -109,7 +114,8 @@ public class IndexRead {
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
 
-                SearchResult sr = new SearchResult(doc);
+                FileInfo finfo = new FileInfo(doc);
+                SearchResult sr = new SearchResult(finfo);
                 result.add(sr);
             }
         } catch (IOException e) {
@@ -120,6 +126,10 @@ public class IndexRead {
 
         return result;
     }
+
+//    public ArrayList<FileInfo> getFilesToUpdateMetadata() {
+
+//    }
 
     public int getNumDocs() {
         if (reader == null) {

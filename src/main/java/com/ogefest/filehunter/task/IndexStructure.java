@@ -20,7 +20,7 @@ public class IndexStructure extends Task {
     private DirectoryIndex directoryIndex;
 
     private HashMap<String, String> fsStructure = new HashMap<>();
-    private HashMap<String, String> indexed = new HashMap<>();
+    private HashMap<String, FileInfo> indexed = new HashMap<>();
 
     private String currentDirectoryIndexing = "";
 
@@ -28,21 +28,25 @@ public class IndexStructure extends Task {
 
     public IndexStructure(DirectoryIndex directoryIndex) {
         this.directoryIndex = directoryIndex;
+//        this.indexStorage = indexStorage;
+//        this.indexRead = indexRead;
     }
 
     @Override
     public void run() {
-        indexStorage = getApp().getIndexForWrite();
-        indexRead = getApp().getIndexForRead();
+        indexStorage = getIndexWrite();
+        indexRead = getIndexRead();
+//        indexStorage = getApp().getIndexForWrite();
+//        indexRead = getApp().getIndexForRead();
 
         if (!indexStorage.isStorageReady() || !indexRead.isStorageReady()) {
             LOG.info("Storage not ready");
             return;
         }
 
-        ArrayList<String> indexedPaths = indexRead.getAllForIndex(directoryIndex.getName());
-        for (String s : indexedPaths) {
-            indexed.put(s, "1");
+        ArrayList<FileInfo> indexedPaths = indexRead.getAllForIndex(directoryIndex.getName());
+        for (FileInfo fi : indexedPaths) {
+            indexed.put(fi.getUuid(), fi);
         }
 
         for (String path : directoryIndex.getPath()) {
@@ -56,12 +60,10 @@ public class IndexStructure extends Task {
                 e.printStackTrace();
             }
         }
-        indexRead.closeIndex();
-        indexStorage.closeIndex();
+
         directoryIndex.setLastStructureIndexed(LocalDateTime.now());
         DirectoryIndexStorage directoryIndexStorage = new DirectoryIndexStorage(getApp().getConfiguration());
         directoryIndexStorage.setDirectory(directoryIndex);
-
     }
 
     private void indexPath(Path path) throws IOException {
@@ -101,87 +103,89 @@ public class IndexStructure extends Task {
     }
 
     private void proceedPath(Path path, BasicFileAttributes attrs) {
-        Document doc = getDocumentFromPath(path, attrs);
+//        Document doc = getDocumentFromPath(path, attrs);
+//
+//        String fpath = path.toAbsolutePath().toString();
+//        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString().replace("-", "");
 
-        String fpath = path.toAbsolutePath().toString();
-        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString().replace("-", "");
+        FileInfo finfo = new FileInfo(path, attrs, directoryIndex);
 
 
         /*
         skip if extension in path exists in directory ignore extensions
          */
-        if (directoryIndex.getIgnoreExtension().contains(doc.get("ext"))) {
+        if (directoryIndex.getIgnoreExtension().contains(finfo.getExt())) {
             return;
         }
         for (String pathToCheck : directoryIndex.getIgnorePath()) {
-            if (doc.get("path").indexOf(pathToCheck) == 0) {
+            if (finfo.getPath().indexOf(pathToCheck) == 0) {
                 return;
             }
         }
         for (String patternToCheck : directoryIndex.getIgnorePhrase()) {
-            if (doc.get("path").indexOf(patternToCheck) != -1) {
+            if (finfo.getPath().indexOf(patternToCheck) != -1) {
                 return;
             }
         }
 
-        try {
-            if (directoryIndex.isExtractMetadata() && indexed.containsKey(docUUID)) {
-                SearchResult currentDocument = indexRead.getByUuid(docUUID);
-                if (currentDocument != null) {
-                    doc.removeField("metaindexed");
-                    //
-                }
-            }
+        String docUUID = finfo.getUuid();
 
-            indexStorage.addDocument(docUUID, doc);
+        FileInfo currentIndexFileInfo = indexed.getOrDefault(docUUID, null);
+        if (currentIndexFileInfo != null) {
+            finfo.setLastMetaIndexed(currentIndexFileInfo.getLastMetaIndexed());
+            finfo.setContent(currentIndexFileInfo.getContent());
+        }
+
+        try {
+            indexStorage.addDocument(finfo);
         } catch (IOException e) {
-            // ignore access error to file/dir
+//            // ignore access error to file/dir
         }
         if (indexed.containsKey(docUUID)) {
             indexed.remove(docUUID);
         }
     }
 
-    private Document getDocumentFromPath(Path path, BasicFileAttributes attrs) {
-
-        Optional<String> opt = Optional.ofNullable(path.getFileName().toString())
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(path.getFileName().toString().lastIndexOf(".") + 1));
-
-        String ext = "";
-        if (opt.isPresent()) {
-            ext = opt.get();
-        }
-
-        Document doc = new Document();
-        String docUUID = UUID.nameUUIDFromBytes(path.toAbsolutePath().toString().getBytes()).toString().replace("-", "");
-        doc.add(new StringField("id", docUUID, Field.Store.YES));
-        doc.add(new TextField("path", path.toAbsolutePath().toString(), Field.Store.YES));
-
-        doc.add(new LongPoint("last_modified", attrs.lastModifiedTime().toMillis()));
-        doc.add(new StoredField("last_modified", attrs.lastModifiedTime().toMillis()));
-
-        doc.add(new LongPoint("indexed", System.currentTimeMillis()));
-        doc.add(new StoredField("indexed", System.currentTimeMillis()));
-
-        doc.add(new LongPoint("created", attrs.creationTime().toMillis()));
-        doc.add(new StoredField("created", attrs.creationTime().toMillis()));
-
-        doc.add(new LongPoint("size", attrs.size()));
-        doc.add(new StoredField("size", attrs.size()));
-
-        doc.add(new LongPoint("metaindexed", 0));
-        doc.add(new StoredField("metaindexed", 0));
-
-        doc.add(new TextField("name", path.getFileName().toString(), Field.Store.YES));
-        doc.add(new StringField("ext", ext, Field.Store.YES));
-        doc.add(new StringField("type", attrs.isDirectory() ? "d" : "f", Field.Store.YES));
-
-        doc.add(new StringField("indexname", directoryIndex.getName(), Field.Store.YES));
-
-
-        return doc;
-    }
+//    private Document getDocumentFromPath(Path path, BasicFileAttributes attrs) {
+//
+//        Optional<String> opt = Optional.ofNullable(path.getFileName().toString())
+//                .filter(f -> f.contains("."))
+//                .map(f -> f.substring(path.getFileName().toString().lastIndexOf(".") + 1));
+//
+//        String ext = "";
+//        if (opt.isPresent()) {
+//            ext = opt.get();
+//        }
+//
+//        Document doc = new Document();
+//        String docUUID = UUID.nameUUIDFromBytes(path.toAbsolutePath().toString().getBytes()).toString().replace("-", "");
+//        doc.add(new StringField("id", docUUID, Field.Store.YES));
+//        doc.add(new TextField("path", path.toAbsolutePath().toString(), Field.Store.YES));
+//
+//        doc.add(new LongPoint("last_modified", attrs.lastModifiedTime().toMillis()));
+//        doc.add(new StoredField("last_modified", attrs.lastModifiedTime().toMillis()));
+//
+//        doc.add(new LongPoint("indexed", System.currentTimeMillis()));
+//        doc.add(new StoredField("indexed", System.currentTimeMillis()));
+//
+//        doc.add(new LongPoint("created", attrs.creationTime().toMillis()));
+//        doc.add(new StoredField("created", attrs.creationTime().toMillis()));
+//
+//        doc.add(new LongPoint("size", attrs.size()));
+//        doc.add(new StoredField("size", attrs.size()));
+//
+//        doc.add(new LongPoint("metaindexed", 0));
+//        doc.add(new StoredField("metaindexed", 0));
+//
+//        doc.add(new TextField("name", path.getFileName().toString(), Field.Store.YES));
+//        doc.add(new StringField("ext", ext, Field.Store.YES));
+//        doc.add(new StringField("type", attrs.isDirectory() ? "d" : "f", Field.Store.YES));
+//
+//        doc.add(new StringField("indexname", directoryIndex.getName(), Field.Store.YES));
+//
+//
+//        return doc;
+//    }
 
     @Override
     public String getTaskName() {
