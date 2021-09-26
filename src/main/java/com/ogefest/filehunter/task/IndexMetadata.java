@@ -1,6 +1,8 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.*;
+import io.quarkus.tika.TikaParser;
+import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -22,13 +24,14 @@ public class IndexMetadata extends Task {
     private IndexRead indexRead;
     private ArrayList<String> contentExtensions;
 
+    private TikaParser tikaParser;
+
     private static final Logger LOG = Logger.getLogger(IndexMetadata.class);
 
     public IndexMetadata(DirectoryIndex directoryIndex) {
         this.directoryIndex = directoryIndex;
 
-        contentExtensions = new ArrayList<>(Arrays.asList("pdf","doc","docx", "xls", "xlsx", "odt"));
-
+        contentExtensions = new ArrayList<>(Arrays.asList("pdf","doc","docx", "xls", "xlsx", "odt", "rtf", "txt", "csv"));
 
 //        this.indexRead = indexRead;
 //        this.indexStorage = indexStorage;
@@ -43,11 +46,13 @@ public class IndexMetadata extends Task {
         indexStorage = getIndexWrite();
         indexRead = getIndexRead();
 
+        tikaParser = new TikaParser(new AutoDetectParser(), true);
+
 //        this.indexStorage = getApp().getIndexForWrite();
 //        this.indexRead = getApp().getIndexForRead();
 
         if (!indexStorage.isStorageReady() || !indexRead.isStorageReady()) {
-            LOG.info("Storage not ready");
+            LOG.debug("Storage not ready");
             return;
         }
 
@@ -63,7 +68,7 @@ public class IndexMetadata extends Task {
             }
 
 
-            if (counter > 100) {
+            if (counter > 1000) {
                 break;
             }
 
@@ -99,18 +104,10 @@ public class IndexMetadata extends Task {
     }
 
     private String plainContent(String filename) throws IOException, TikaException, SAXException {
-        BodyContentHandler handler = new BodyContentHandler(100000);
 
-        AutoDetectParser parser = new AutoDetectParser();
-        Metadata metadata = new Metadata();
         try (InputStream stream = new FileInputStream(filename)) {
-            parser.parse(stream, handler, metadata);
-
-//            for (String name : metadata.names()) {
-//                System.out.println(name + " " + metadata.get(name));
-//            }
-
-            return handler.toString();
+            return tikaParser.parse(stream).getText();
         }
+
     }
 }

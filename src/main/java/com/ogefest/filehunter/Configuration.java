@@ -5,6 +5,7 @@ package com.ogefest.filehunter;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 public class Configuration {
     private String filename;
@@ -17,6 +18,13 @@ public class Configuration {
          */
         configuration.put("storage.directory", new File("filehunterstorage").getAbsolutePath());
 
+        Properties props = System.getProperties();
+        for (String key : props.stringPropertyNames()) {
+            if (key.indexOf("filehunter") == 0) {
+                configuration.put(key.substring(11), props.get(key).toString());
+            }
+        }
+
         Map<String, String> envs = System.getenv();
         for (String key : envs.keySet()) {
             if (key.indexOf("filehunter") == 0) {
@@ -24,20 +32,10 @@ public class Configuration {
             }
          }
 
-//        configuration.put("storage.directory", System.getenv("filehunter.storage.directory"));
-//        if (configuration.get("storage.directory") == null) {
-//            configuration.put("storage.directory", new File("filehunterstorage").getAbsolutePath());
-//        }
-
     }
 
     public String getValue(String key) {
         return configuration.get(key);
-//        HashMap<String, String> data = new HashMap<>();
-////        data.put("storage.directory", "./filehunterstorage");
-//        data.put("storage.directory", new File("filehunterstorage").getAbsolutePath());
-//
-//        return data.get(key);
     }
 
 //    public ArrayList<Directory> getDirectoriesFromConfig() {
