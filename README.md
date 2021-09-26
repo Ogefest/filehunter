@@ -13,6 +13,18 @@ are stored on multiple hosts with multiple directories.
 ## Screenshot
 ![screenshot](screenshot.png)
 
+## Configuration variables
+Filehunter might be configured using env variables. Lists of variables is available below. 
+You can set this value `./filehunter -Dvar.name=var.value -Dvar2.name=var2.value` for example `./filehunter -Dfilehunter.storage.directory=/tmp/myindexdirectory`
+
+
+| var | description | default value|
+|-----|-------------|---------------|
+| filehunter.storage.directory | Directory for index data | `./filehunterstorage` |
+
+
+
+
 ## FAQ
 - Is Filehunter ready and steady?
   - Nope, right now is in early development stage and probably has some bugs which might make it hard to use
