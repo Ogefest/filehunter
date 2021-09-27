@@ -1,6 +1,7 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.*;
+import io.quarkus.tika.TikaParseException;
 import io.quarkus.tika.TikaParser;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
@@ -87,12 +88,8 @@ public class IndexMetadata extends Task {
             String content = plainContent(fileInfo.getPath());
             fileInfo.setContent(content.trim());
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TikaException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-//            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.warn("Unable to parse " + fileInfo.getPath());
         }
 
         fileInfo.setLastMetaIndexed(LocalDateTime.now());
@@ -103,11 +100,15 @@ public class IndexMetadata extends Task {
         }
     }
 
-    private String plainContent(String filename) throws IOException, TikaException, SAXException {
+    private String plainContent(String filename) throws IOException, TikaException, SAXException, TikaParseException {
 
-        try (InputStream stream = new FileInputStream(filename)) {
+        try  {
+            InputStream stream = new FileInputStream(filename);
             return tikaParser.parse(stream).getText();
+        } catch (Exception e) {
+            LOG.warn("Unable to parse " + filename);
         }
+        return "";
 
     }
 }
