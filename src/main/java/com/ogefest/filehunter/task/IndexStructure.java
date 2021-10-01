@@ -59,7 +59,7 @@ public class IndexStructure extends Task {
         }
 
         directoryIndex.setLastStructureIndexed(LocalDateTime.now());
-        DirectoryIndexStorage directoryIndexStorage = new DirectoryIndexStorage(getApp().getConfiguration());
+        DirectoryIndexStorage directoryIndexStorage = new DirectoryIndexStorage(getConfiguration());
         directoryIndexStorage.setDirectory(directoryIndex);
     }
 
