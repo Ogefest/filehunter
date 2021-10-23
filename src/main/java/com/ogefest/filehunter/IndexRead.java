@@ -3,20 +3,26 @@ package com.ogefest.filehunter;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.LongPoint;
+import org.apache.lucene.document.LongRange;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexNotFoundException;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
+import org.apache.lucene.queryparser.xml.builders.RangeQueryBuilder;
+import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.QueryBuilder;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class IndexRead {
 
@@ -96,7 +102,12 @@ public class IndexRead {
         return searchResults.get(0);
     }
 
+
     public ArrayList<SearchResult> query(String q) {
+        return query(q, new HashMap<>());
+    }
+
+    public ArrayList<SearchResult> query(String q, HashMap<String, String> filters) {
 
         ArrayList<SearchResult> result = new ArrayList<>();
         if (searcher == null) {
@@ -107,10 +118,30 @@ public class IndexRead {
 
             QueryParser parser = new QueryParser("path", analyzer);
             parser.setDefaultOperator(QueryParser.Operator.AND);
+            Query pathQueryTmp = parser.parse(q);
+            BoostQuery pathQuery = new BoostQuery(pathQueryTmp, 1.2f);
 
-            Query query = parser.parse(q);
-//            BoostQuery bq = new BoostQuery(query);
-            TopDocs hits = searcher.search(query, 100);
+            QueryParser parserContent = new QueryParser("content", analyzer);
+            parserContent.setDefaultOperator(QueryParser.Operator.AND);
+            Query contentQuery = parserContent.parse(q);
+
+
+            // path^1.2 OR content
+            BooleanQuery.Builder mainQuery = new BooleanQuery.Builder();
+            mainQuery.add(pathQuery, BooleanClause.Occur.SHOULD);
+            mainQuery.add(contentQuery, BooleanClause.Occur.SHOULD);
+
+
+            // final + filters
+            BooleanQuery.Builder finalQuery = new BooleanQuery.Builder();
+            finalQuery.add(mainQuery.build(), BooleanClause.Occur.MUST);
+            addSingleFilters(finalQuery, filters);
+            addRangeFilters(finalQuery, filters);
+
+
+            Query searchQuery = finalQuery.build();
+
+            TopDocs hits = searcher.search(searchQuery, 100);
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
 
@@ -127,9 +158,51 @@ public class IndexRead {
         return result;
     }
 
-//    public ArrayList<FileInfo> getFilesToUpdateMetadata() {
+    private void addSingleFilters(BooleanQuery.Builder query, HashMap<String, String> queryFilters) {
 
-//    }
+        String supportedFields[] = { "index", "ext", "name", "content", "path" };
+        List<String> supportedFilters = Arrays.asList(supportedFields);
+
+        for (String k : supportedFilters) {
+            if (queryFilters.containsKey(k)) {
+                query.add(new TermQuery(new Term(k, queryFilters.get(k))), BooleanClause.Occur.MUST);
+            }
+        }
+    }
+
+    private void addRangeFilters(BooleanQuery.Builder query, HashMap<String, String> queryFilters) {
+        HashMap<String, List<String>> supported = new HashMap<>();
+
+        String sizeKeys[] = {"minsize", "maxsize"};
+        supported.put("size", Arrays.asList(sizeKeys));
+
+        String modifiedKeys[] = {"modified_after", "modified_before"};
+        supported.put("last_modified", Arrays.asList(modifiedKeys));
+
+        String createdKeys[] = {"created_after", "created_before"};
+        supported.put("created", Arrays.asList(createdKeys));
+
+        for (String k : supported.keySet()) {
+
+            String fieldMin = supported.get(k).get(0);
+            String fieldMax = supported.get(k).get(1);
+
+            if (!queryFilters.containsKey(fieldMin) && !queryFilters.containsKey(fieldMax)) {
+                continue;
+            }
+            long fieldMinLong = 0;
+            if (queryFilters.containsKey(fieldMin)) {
+                fieldMinLong = Long.parseLong(queryFilters.get(fieldMin));
+            }
+
+            long fieldMaxLong = Long.MAX_VALUE;
+            if (queryFilters.containsKey(fieldMax) && !queryFilters.get(fieldMax).equals("0")) {
+                fieldMaxLong = Long.parseLong(queryFilters.get(fieldMax));
+            }
+
+            query.add(LongPoint.newRangeQuery(k, fieldMinLong, fieldMaxLong), BooleanClause.Occur.MUST);
+        }
+    }
 
     public int getNumDocs() {
         if (reader == null) {
