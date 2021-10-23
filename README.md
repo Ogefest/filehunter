@@ -44,7 +44,7 @@ You can set this value `./filehunter -Dvar.name=var.value -Dvar2.name=var2.value
 - more configuration options:
   - enable/disable UI
   - enable/disable methods in API 
-- improve search relevance
-- improve advanced search in UI
-- metadata extraction using Apache Tika
+- ~~improve search relevance~~ DONE
+- ~~improve advanced search in UI~~ DONE
+- ~~metadata extraction using Apache Tika~~ DONE
 - support for different architectures like Windows or ARM
