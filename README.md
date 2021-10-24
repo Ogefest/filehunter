@@ -47,4 +47,4 @@ You can set this value `./filehunter -Dvar.name=var.value -Dvar2.name=var2.value
 - ~~improve search relevance~~ DONE
 - ~~improve advanced search in UI~~ DONE
 - ~~metadata extraction using Apache Tika~~ DONE
-- support for different architectures like Windows or ARM
+- support for different architectures like Windows ~~or ARM~~ DONE
