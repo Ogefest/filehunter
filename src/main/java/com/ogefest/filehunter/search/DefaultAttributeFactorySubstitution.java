@@ -1,4 +1,4 @@
-package com.ogefest.filehunter;
+package com.ogefest.filehunter.search;
 /*
 Because there is the problem with lucene + native-build using graalvm
 when you have working code and after build binary using native-build and got exception similar to

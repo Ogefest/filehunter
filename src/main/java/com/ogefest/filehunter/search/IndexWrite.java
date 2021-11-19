@@ -1,5 +1,6 @@
-package com.ogefest.filehunter;
+package com.ogefest.filehunter.search;
 
+import com.ogefest.filehunter.*;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -29,7 +30,7 @@ public class IndexWrite {
         try {
 
             Analyzer analyzer2 = new StandardAnalyzer();
-            Analyzer analyzer = FHAnalyzer.get();
+            Analyzer analyzer = new FHAnalyzer();// FHAnalyzer.get();
             FSDirectory storage = FSDirectory.open(Paths.get(conf.getValue("storage.directory")));
 
             IndexWriterConfig iwc = new IndexWriterConfig(analyzer);

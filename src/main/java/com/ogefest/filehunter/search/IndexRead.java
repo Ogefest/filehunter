@@ -1,21 +1,20 @@
-package com.ogefest.filehunter;
+package com.ogefest.filehunter.search;
 
+import com.ogefest.filehunter.Configuration;
+import com.ogefest.filehunter.FHAnalyzer;
+import com.ogefest.filehunter.FileInfo;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.document.LongRange;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexNotFoundException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
-import org.apache.lucene.queryparser.xml.builders.RangeQueryBuilder;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.QueryBuilder;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -70,8 +69,8 @@ public class IndexRead {
 
         try {
 //            Query query = new MatchAllDocsQuery();
-            Analyzer analyzer2 = new StandardAnalyzer();
-            Analyzer analyzer = FHAnalyzer.get();
+//            Analyzer analyzer2 = new StandardAnalyzer();
+            Analyzer analyzer = new FHAnalyzer();//FHAnalyzer.get();
             QueryParser parser = new QueryParser("path", analyzer);
 //            QueryParser parser = new QueryParser("path", analyzer);
 

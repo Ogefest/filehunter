@@ -1,6 +1,8 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.search.IndexRead;
+import com.ogefest.filehunter.search.IndexWrite;
 import org.jboss.logging.Logger;
 
 import java.io.IOException;

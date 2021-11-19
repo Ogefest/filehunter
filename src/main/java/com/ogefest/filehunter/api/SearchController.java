@@ -1,11 +1,10 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
-import com.ogefest.filehunter.IndexRead;
-import com.ogefest.filehunter.SearchResult;
+import com.ogefest.filehunter.search.IndexRead;
+import com.ogefest.filehunter.search.SearchResult;
 
 import javax.inject.Inject;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
@@ -14,7 +13,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 @Path("/search")
 public class SearchController {

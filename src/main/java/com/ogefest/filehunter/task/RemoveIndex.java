@@ -1,6 +1,6 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.IndexWrite;
+import com.ogefest.filehunter.search.IndexWrite;
 
 public class RemoveIndex extends Task {
 

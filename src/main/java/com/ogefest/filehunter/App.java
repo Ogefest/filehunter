@@ -1,11 +1,11 @@
 package com.ogefest.filehunter;
 
+import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.task.IndexMetadata;
 import com.ogefest.filehunter.task.IndexStructure;
 import com.ogefest.filehunter.task.Task;
 import com.ogefest.filehunter.task.Worker;
 import io.quarkus.scheduler.Scheduled;
-import org.jboss.logging.Logger;
 
 import javax.inject.Singleton;
 import java.time.LocalDateTime;

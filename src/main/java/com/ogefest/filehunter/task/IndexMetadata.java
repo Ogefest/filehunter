@@ -1,13 +1,12 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.search.IndexRead;
+import com.ogefest.filehunter.search.IndexWrite;
 import io.quarkus.tika.TikaParseException;
 import io.quarkus.tika.TikaParser;
-import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 

@@ -1,4 +1,7 @@
-package com.ogefest.filehunter;
+package com.ogefest.filehunter.search;
+
+import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.FileType;
 
 public class SearchResult {
 
