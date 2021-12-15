@@ -1,10 +1,9 @@
 package com.ogefest.filehunter;
 
 import com.ogefest.filehunter.search.IndexRead;
-import com.ogefest.filehunter.task.IndexMetadata;
-import com.ogefest.filehunter.task.IndexStructure;
-import com.ogefest.filehunter.task.Task;
-import com.ogefest.filehunter.task.Worker;
+import com.ogefest.filehunter.storage.FileSystemDatabase;
+import com.ogefest.filehunter.storage.SqliteFSD;
+import com.ogefest.filehunter.task.*;
 import io.quarkus.scheduler.Scheduled;
 
 import javax.inject.Singleton;
@@ -18,10 +17,12 @@ public class App {
     private ArrayList<Task> tasks = new ArrayList<>();
     private Configuration conf;
     private Worker taskWorker;
+    private FileSystemDatabase dbStorage;
 
     public App() {
         conf = new Configuration();
         taskWorker = new Worker(conf);
+        dbStorage = new SqliteFSD(conf);
     }
 
     public Configuration getConfiguration() {
@@ -41,17 +42,20 @@ public class App {
             return;
         }
 
+//        FileSystemDatabase db = new SqliteFSD(conf);
+
         DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
         for (DirectoryIndex d : storage.getDirectories()) {
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
-                addTask(new IndexStructure(d));
+//                addTask(new IndexStructure(d));
+                addTask(new ReindexStructure(d, dbStorage));
             }
         }
-
-        DirectoryIndexStorage storage2 = new DirectoryIndexStorage(conf);
-        for (DirectoryIndex d : storage.getDirectories()) {
-                addTask(new IndexMetadata(d));
-        }
+//
+//        DirectoryIndexStorage storage2 = new DirectoryIndexStorage(conf);
+//        for (DirectoryIndex d : storage.getDirectories()) {
+//                addTask(new IndexMetadata(d));
+//        }
 
     }
 

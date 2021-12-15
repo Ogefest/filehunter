@@ -27,5 +27,6 @@
     <orderEntry type="library" name="Maven: io.quarkus:quarkus-tika:2.1.4.Final" level="project" />
     <orderEntry type="library" name="Maven: io.quarkus:quarkus-builder:2.1.4.Final" level="project" />
     <orderEntry type="library" name="Maven: io.quarkus:quarkus-core-deployment:2.1.4.Final" level="project" />
+    <orderEntry type="library" name="Maven: com.ogefest:UnifiedCloudFileSystem:1.0-SNAPSHOT" level="project" />
   </component>
 </module>

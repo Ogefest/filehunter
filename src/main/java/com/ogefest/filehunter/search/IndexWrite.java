@@ -59,15 +59,15 @@ public class IndexWrite {
         }
     }
 
-    public void addDocument(FileInfo fileInfo) throws IOException {
-        Document doc = getDocumentFromFileInfo(fileInfo);
+    public void addDocument(FileInfoLucene fileInfoLucene) throws IOException {
+        Document doc = getDocumentFromFileInfo(fileInfoLucene);
 
-        if (fileInfo.getLastModified().isAfter(fileInfo.getLastMetaIndexed())) {
+        if (fileInfoLucene.getLastModified().isAfter(fileInfoLucene.getLastMetaIndexed())) {
             doc.removeField("tometareindex");
             doc.add(new IntPoint("tometareindex", 1));
         }
 
-        writer.updateDocument(new Term("id", fileInfo.getUuid()), doc);
+        writer.updateDocument(new Term("id", fileInfoLucene.getUuid()), doc);
 
         indexCounter++;
         if (indexCounter % 1000 == 0) {
@@ -116,35 +116,35 @@ public class IndexWrite {
         return result;
     }
 
-    private Document getDocumentFromFileInfo(FileInfo fileInfo) {
+    private Document getDocumentFromFileInfo(FileInfoLucene fileInfoLucene) {
 
         Document doc = new Document();
 //        String docUUID = UUID.nameUUIDFromBytes(path.toAbsolutePath().toString().getBytes()).toString().replace("-", "");
 
-        doc.add(new StringField("id", fileInfo.getUuid(), Field.Store.YES));
-        doc.add(new TextField("path", fileInfo.getPath(), Field.Store.YES));
+        doc.add(new StringField("id", fileInfoLucene.getUuid(), Field.Store.YES));
+        doc.add(new TextField("path", fileInfoLucene.getPath(), Field.Store.YES));
 
-        doc.add(new LongPoint("last_modified", fileInfo.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
-        doc.add(new StoredField("last_modified", fileInfo.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
+        doc.add(new LongPoint("last_modified", fileInfoLucene.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
+        doc.add(new StoredField("last_modified", fileInfoLucene.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
 
-        doc.add(new LongPoint("created", fileInfo.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
-        doc.add(new StoredField("created", fileInfo.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
+        doc.add(new LongPoint("created", fileInfoLucene.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
+        doc.add(new StoredField("created", fileInfoLucene.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
 
-        doc.add(new LongPoint("size", fileInfo.getSize() ));
-        doc.add(new StoredField("size", fileInfo.getSize() ));
+        doc.add(new LongPoint("size", fileInfoLucene.getSize() ));
+        doc.add(new StoredField("size", fileInfoLucene.getSize() ));
 
-        doc.add(new LongPoint("metaindexed", fileInfo.getLastMetaIndexed().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
-        doc.add(new StoredField("metaindexed", fileInfo.getLastMetaIndexed().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        doc.add(new LongPoint("metaindexed", fileInfoLucene.getLastMetaIndexed().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        doc.add(new StoredField("metaindexed", fileInfoLucene.getLastMetaIndexed().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
 
         doc.add(new IntPoint("tometareindex", 0));
 
-        doc.add(new TextField("name", fileInfo.getName(), Field.Store.YES));
-        doc.add(new StringField("ext", fileInfo.getExt(), Field.Store.YES));
-        doc.add(new StringField("type", fileInfo.getType() == FileType.DIRECTORY ? "d" : "f", Field.Store.YES));
+        doc.add(new TextField("name", fileInfoLucene.getName(), Field.Store.YES));
+        doc.add(new StringField("ext", fileInfoLucene.getExt(), Field.Store.YES));
+        doc.add(new StringField("type", fileInfoLucene.getType() == FileType.DIRECTORY ? "d" : "f", Field.Store.YES));
 
-        doc.add(new StringField("indexname", fileInfo.getIndexname(), Field.Store.YES));
+        doc.add(new StringField("indexname", fileInfoLucene.getIndexname(), Field.Store.YES));
 
-        doc.add(new TextField("content", fileInfo.getContent(), Field.Store.YES));
+        doc.add(new TextField("content", fileInfoLucene.getContent(), Field.Store.YES));
 
         return doc;
     }

@@ -1,6 +1,6 @@
 package com.ogefest.filehunter.search;
 
-import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.FileInfoLucene;
 import com.ogefest.filehunter.FileType;
 
 public class SearchResult {
@@ -13,7 +13,7 @@ public class SearchResult {
     private String indexname = "";
     private String name = "";
 
-    public SearchResult(FileInfo finfo) {
+    public SearchResult(FileInfoLucene finfo) {
         uuid = finfo.getUuid();
         path = finfo.getPath();
         name = finfo.getName();

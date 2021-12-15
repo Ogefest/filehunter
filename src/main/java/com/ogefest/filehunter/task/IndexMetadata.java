@@ -56,9 +56,9 @@ public class IndexMetadata extends Task {
             return;
         }
 
-        ArrayList<FileInfo> fileList = indexRead.getAllForIndex(directoryIndex.getName());
+        ArrayList<FileInfoLucene> fileList = indexRead.getAllForIndex(directoryIndex.getName());
         int counter = 0;
-        for (FileInfo f : fileList) {
+        for (FileInfoLucene f : fileList) {
 
             if (!contentExtensions.contains(f.getExt())) {
                 continue;
@@ -81,19 +81,19 @@ public class IndexMetadata extends Task {
 
     }
 
-    private void updateMeta(FileInfo fileInfo) {
+    private void updateMeta(FileInfoLucene fileInfoLucene) {
         try {
 
-            String content = plainContent(fileInfo.getPath());
-            fileInfo.setContent(content.trim());
+            String content = plainContent(fileInfoLucene.getPath());
+            fileInfoLucene.setContent(content.trim());
 
         } catch (Exception e) {
-            LOG.warn("Unable to parse " + fileInfo.getPath());
+            LOG.warn("Unable to parse " + fileInfoLucene.getPath());
         }
 
-        fileInfo.setLastMetaIndexed(LocalDateTime.now());
+        fileInfoLucene.setLastMetaIndexed(LocalDateTime.now());
         try {
-            indexStorage.addDocument(fileInfo);
+            indexStorage.addDocument(fileInfoLucene);
         } catch (IOException e) {
             e.printStackTrace();
         }

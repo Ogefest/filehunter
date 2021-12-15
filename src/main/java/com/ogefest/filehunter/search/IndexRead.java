@@ -2,7 +2,7 @@ package com.ogefest.filehunter.search;
 
 import com.ogefest.filehunter.Configuration;
 import com.ogefest.filehunter.FHAnalyzer;
-import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.FileInfoLucene;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -56,13 +56,13 @@ public class IndexRead {
         return reader != null;
     }
 
-    public ArrayList<FileInfo> getAllForIndex(String name) {
+    public ArrayList<FileInfoLucene> getAllForIndex(String name) {
 
         /*
         @TODO refactor this method, it can't return all documents with content
         in some cases memory will not be enough
          */
-        ArrayList<FileInfo> result = new ArrayList<>();
+        ArrayList<FileInfoLucene> result = new ArrayList<>();
         if (searcher == null) {
             return result;
         }
@@ -80,7 +80,7 @@ public class IndexRead {
             TopDocs hits = searcher.search(query, Integer.MAX_VALUE);
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
-                result.add(new FileInfo(doc));
+                result.add(new FileInfoLucene(doc));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -144,7 +144,7 @@ public class IndexRead {
             for(ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
 
-                FileInfo finfo = new FileInfo(doc);
+                FileInfoLucene finfo = new FileInfoLucene(doc);
                 SearchResult sr = new SearchResult(finfo);
                 result.add(sr);
             }

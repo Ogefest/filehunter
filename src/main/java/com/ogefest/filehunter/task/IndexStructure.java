@@ -19,7 +19,7 @@ public class IndexStructure extends Task {
     private DirectoryIndex directoryIndex;
 
     private HashMap<String, String> fsStructure = new HashMap<>();
-    private HashMap<String, FileInfo> indexed = new HashMap<>();
+    private HashMap<String, FileInfoLucene> indexed = new HashMap<>();
 
     private String currentDirectoryIndexing = "";
 
@@ -43,8 +43,8 @@ public class IndexStructure extends Task {
             return;
         }
 
-        ArrayList<FileInfo> indexedPaths = indexRead.getAllForIndex(directoryIndex.getName());
-        for (FileInfo fi : indexedPaths) {
+        ArrayList<FileInfoLucene> indexedPaths = indexRead.getAllForIndex(directoryIndex.getName());
+        for (FileInfoLucene fi : indexedPaths) {
             indexed.put(fi.getUuid(), fi);
         }
 
@@ -107,7 +107,8 @@ public class IndexStructure extends Task {
 //        String fpath = path.toAbsolutePath().toString();
 //        String docUUID = UUID.nameUUIDFromBytes(fpath.getBytes()).toString().replace("-", "");
 
-        FileInfo finfo = new FileInfo(path, attrs, directoryIndex);
+        FileInfoLucene finfo = new FileInfoLucene(path, attrs, directoryIndex);
+        
 
 
         /*
@@ -129,10 +130,10 @@ public class IndexStructure extends Task {
 
         String docUUID = finfo.getUuid();
 
-        FileInfo currentIndexFileInfo = indexed.getOrDefault(docUUID, null);
-        if (currentIndexFileInfo != null) {
-            finfo.setLastMetaIndexed(currentIndexFileInfo.getLastMetaIndexed());
-            finfo.setContent(currentIndexFileInfo.getContent());
+        FileInfoLucene currentIndexFileInfoLucene = indexed.getOrDefault(docUUID, null);
+        if (currentIndexFileInfoLucene != null) {
+            finfo.setLastMetaIndexed(currentIndexFileInfoLucene.getLastMetaIndexed());
+            finfo.setContent(currentIndexFileInfoLucene.getContent());
         }
 
         try {
