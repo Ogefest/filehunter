@@ -3,6 +3,9 @@ package com.ogefest.filehunter.task;
 import com.ogefest.filehunter.Configuration;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.IndexWrite;
+import com.ogefest.filehunter.storage.FileSystemDatabase;
+
+import java.io.File;
 
 public abstract class Task {
 
@@ -10,6 +13,7 @@ public abstract class Task {
     private IndexWrite indexWrite;
     private IndexRead indexRead;
     private Configuration conf;
+    private FileSystemDatabase db;
 
 //    public void setApp(App app) {
 //        this.app = app;
@@ -26,6 +30,14 @@ public abstract class Task {
     public void setIndexes(IndexWrite write, IndexRead read) {
         this.indexWrite = write;
         this.indexRead = read;
+    }
+
+    public void setDatabase(FileSystemDatabase db) {
+        this.db = db;
+    }
+
+    protected FileSystemDatabase getDatabase() {
+        return db;
     }
 
     public String getTaskName() {

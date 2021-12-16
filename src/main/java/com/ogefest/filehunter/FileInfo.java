@@ -7,10 +7,14 @@ import java.util.zip.CRC32;
 public class FileInfo {
 
     private String path;
-    private DirectoryIndex index;
+    private String index;
     private FileAttributes fileAttributes;
+    private int id;
+    private int parentId;
 
-    public FileInfo(String path, DirectoryIndex index, FileAttributes fileAttributes) {
+    public FileInfo(int id, int parentId, String path, String index, FileAttributes fileAttributes) {
+        this.id = id;
+        this.parentId = parentId;
         this.path = path;
         this.index = index;
         this.fileAttributes = fileAttributes;
@@ -22,11 +26,23 @@ public class FileInfo {
         return String.format(Locale.US,"%08X", crc32.getValue());
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public boolean existsInDatabase() {
+        return id > 0;
+    }
+
     public String getPath() {
         return  path;
     }
 
-    public DirectoryIndex getIndex() {
+    public String getIndexName() {
         return index;
     }
 

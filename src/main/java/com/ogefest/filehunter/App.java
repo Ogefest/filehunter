@@ -5,6 +5,7 @@ import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.filehunter.storage.SqliteFSD;
 import com.ogefest.filehunter.task.*;
 import io.quarkus.scheduler.Scheduled;
+import org.jboss.logging.Logger;
 
 import javax.inject.Singleton;
 import java.time.LocalDateTime;
@@ -47,10 +48,13 @@ public class App {
         DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
         for (DirectoryIndex d : storage.getDirectories()) {
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
-//                addTask(new IndexStructure(d));
-                addTask(new ReindexStructure(d, dbStorage));
+                addTask(new ReindexStructure(d));
+
+                d.setLastStructureIndexed(LocalDateTime.now());
+                storage.setDirectory(d);
             }
         }
+//        db.closeConnection();
 //
 //        DirectoryIndexStorage storage2 = new DirectoryIndexStorage(conf);
 //        for (DirectoryIndex d : storage.getDirectories()) {

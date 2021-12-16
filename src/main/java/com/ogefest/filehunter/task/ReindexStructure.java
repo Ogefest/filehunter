@@ -3,6 +3,7 @@ package com.ogefest.filehunter.task;
 import com.ogefest.filehunter.DirectoryIndex;
 import com.ogefest.filehunter.FileAttributes;
 import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.storage.FTSStatus;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
 import com.ogefest.unifiedcloudfilesystem.FileObject;
@@ -23,11 +24,11 @@ public class ReindexStructure extends Task {
     private int reindexTimestamp = 0;
     private UnifiedCloudFileSystem ucfs;
 
-    public ReindexStructure(DirectoryIndex index, FileSystemDatabase db) {
-        this.db = db;
+    public ReindexStructure(DirectoryIndex index) {
+
         this.index = index;
 
-        reindexTimestamp = (int) (Instant.now().getEpochSecond()/1000);
+        reindexTimestamp = (int) (Instant.now().getEpochSecond());
 
         /**
          * @TODO This should be taken from DirectoryIndex there should be engine type and configuration
@@ -42,7 +43,11 @@ public class ReindexStructure extends Task {
 
     @Override
     public void run() {
+        this.db = getDatabase();
+
         FileObject rootPath = ucfs.getByPath(index.getName(), "/");
+
+        db.openReindexingSession(reindexTimestamp, index);
 
         try {
             walk(rootPath);
@@ -52,7 +57,23 @@ public class ReindexStructure extends Task {
             e.printStackTrace();
         }
 
-        index.setLastStructureIndexed(LocalDateTime.now());
+
+        ArrayList<FileInfo> itemsToClear = db.getItemsToClear();
+        for (FileInfo fi : itemsToClear) {
+            /**
+             * @TODO remove from Lucene
+             */
+            db.clear(fi);
+        }
+        ArrayList<FileInfo> itemsToReindex = db.getItemsToFullTextIndex();
+        for (FileInfo fi : itemsToReindex) {
+            /**
+             * @TODO add item to lucene
+             */
+        }
+
+        db.closeReindexingSession(reindexTimestamp, index);
+
     }
 
     protected void walk(FileObject item) throws IOException, ResourceAccessException {
@@ -73,11 +94,16 @@ public class ReindexStructure extends Task {
         FileAttributes fa = new FileAttributes();
         fa.setSize(obj.getEngineItem().getSize());
 
-        FileInfo fi = new FileInfo(obj.getEngineItem().getPath(), index, fa);
+//        FileInfo fi = new FileInfo(obj.getEngineItem().getPath(), index, fa);
+        FileInfo fi = db.get(obj.getEngineItem().getPath(), index);
         if (!db.exists(fi)) {
-            db.add(fi);
+            db.add(fi, reindexTimestamp);
+            fi = db.get(obj.getEngineItem().getPath(), index);
+
+            db.setCurrentFTSStatus(fi, FTSStatus.TO_ADD.getValue());
+            db.setCurrentStatus(fi, reindexTimestamp);
         } else {
-            db.setReindexCounter(fi, reindexTimestamp);
+            db.setCurrentStatus(fi, reindexTimestamp);
         }
 
     }
