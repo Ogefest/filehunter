@@ -15,14 +15,15 @@ public class SqliteFSD implements FileSystemDatabase {
 
     protected Configuration conf;
     protected Connection conn;
-    protected String dbFilePath = "/tmp/filehunter.fs.db";
+    protected String dbFilePath = null;
 
     public SqliteFSD(Configuration conf) {
         this.conf = conf;
 
+        dbFilePath = conf.getValue("storage.directory") + "/filesystem.db";
+
         String connectionUrl = conf.getValue("DB_URL");
         if (connectionUrl == null || connectionUrl.equals("")) {
-//            connectionUrl = "jdbc:sqlite:/tmp/filehunter.fs.db";
             connectionUrl = "jdbc:sqlite::memory:";
         }
 
