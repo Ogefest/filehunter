@@ -4,6 +4,7 @@ import com.ogefest.filehunter.App;
 import com.ogefest.filehunter.DirectoryIndex;
 import com.ogefest.filehunter.DirectoryIndexStorage;
 import com.ogefest.filehunter.task.IndexStructure;
+import com.ogefest.filehunter.task.ReindexStructure;
 import com.ogefest.filehunter.task.RemoveIndex;
 
 import javax.inject.Inject;
@@ -27,20 +28,6 @@ public class IndexController {
         return storage.getDirectories();
     }
 
-
-//    @POST
-//    @Path("/reindex")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public void reindex() {
-//
-//        DirectoryStorage storage = new DirectoryStorage(app.getConfiguration());
-//        ArrayList<Directory> dirs = storage.getDirectories();
-//
-//        for (Directory d : dirs) {
-//            app.addTask(new IndexStructure(d));
-//        }
-//    }
-
     @POST
     @Path("/reindex/{name}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -50,7 +37,7 @@ public class IndexController {
         ArrayList<DirectoryIndex> dirs = storage.getDirectories();
 
         DirectoryIndex d = storage.getByName(name);
-        app.addTask(new IndexStructure(d));
+        app.addTask(new ReindexStructure(d));
     }
 
     @POST

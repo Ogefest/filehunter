@@ -13,6 +13,7 @@ public interface FileSystemDatabase {
     void clear(FileInfo fi);
 
     FileInfo get(String path, DirectoryIndex index);
+    ArrayList<FileInfo> list(String path, DirectoryIndex index);
     boolean exists(FileInfo fi);
 
     void setCurrentStatus(FileInfo fi, int counter);

@@ -77,14 +77,6 @@ public class SqliteFSD implements FileSystemDatabase {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } finally {
-//            try {
-//                if (conn != null) {
-//                    conn.close();
-//                }
-//            } catch (SQLException ex) {
-//                System.out.println(ex.getMessage());
-//            }
         }
     }
 
@@ -143,6 +135,33 @@ public class SqliteFSD implements FileSystemDatabase {
         }
 
         return getById(id);
+    }
+
+    @Override
+    public ArrayList<FileInfo> list(String path, DirectoryIndex index) {
+        int id = getIdByPath(path, index);
+
+        ArrayList<FileInfo> result = new ArrayList<>();
+
+        if (id == 0 && !path.equals("/")) {
+            return result;
+        }
+
+        String sql = "SELECT id FROM filesystem WHERE parent_id = ? AND storage = ?";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            pstmt.setString(2, index.getName());
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                result.add(getById(rs.getInt("id")));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     @Override
@@ -306,7 +325,7 @@ public class SqliteFSD implements FileSystemDatabase {
                 pstmt.setInt(1, qid);
                 ResultSet rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    result += "/" + rs.getString("fname");
+                    result = "/" + rs.getString("fname") + result;
                     qid = rs.getInt("parent_id");
                 } else {
                     break;

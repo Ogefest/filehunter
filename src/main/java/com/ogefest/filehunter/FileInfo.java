@@ -20,11 +20,29 @@ public class FileInfo {
         this.fileAttributes = fileAttributes;
     }
 
-    public String getHash() {
-        CRC32 crc32 = new CRC32();
-        crc32.update(path.getBytes());
-        return String.format(Locale.US,"%08X", crc32.getValue());
+    public String getName() {
+        String[] elems = path.split("/");
+
+        return elems[elems.length - 1];
     }
+
+    public String getExt() {
+        String[] elems = path.split("\\.");
+
+        if (elems.length < 2) {
+            return "";
+        }
+        if (elems[elems.length-1].length() > 5) {
+            return "";
+        }
+        return elems[elems.length - 1];
+    }
+
+//    public String getHash() {
+//        CRC32 crc32 = new CRC32();
+//        crc32.update(path.getBytes());
+//        return String.format(Locale.US,"%08X", crc32.getValue());
+//    }
 
     public int getId() {
         return id;
