@@ -14,9 +14,9 @@ public class FileInfoLucene {
 
     private String uuid;
     private String path;
-    private LocalDateTime lastModified = LocalDateTime.of(1970, 1, 1,0,0);
-    private LocalDateTime created = LocalDateTime.of(1970, 1, 1,0,0);
-    private LocalDateTime lastMetaIndexed = LocalDateTime.of(1970, 1, 1,0,0);
+    private LocalDateTime lastModified = LocalDateTime.of(1970, 1, 1, 0, 0);
+    private LocalDateTime created = LocalDateTime.of(1970, 1, 1, 0, 0);
+    private LocalDateTime lastMetaIndexed = LocalDateTime.of(1970, 1, 1, 0, 0);
     private String name;
     private String ext = "";
     private long size = 0;
@@ -42,7 +42,7 @@ public class FileInfoLucene {
         this.content = doc.get("content");
     }
 
-    public FileInfoLucene(Path inputPath, BasicFileAttributes basicFileAttributes, DirectoryIndex directoryIndex ) {
+    public FileInfoLucene(Path inputPath, BasicFileAttributes basicFileAttributes, DirectoryIndex directoryIndex) {
         indexname = directoryIndex.getName();
 
         type = basicFileAttributes.isDirectory() ? FileType.DIRECTORY : FileType.FILE;

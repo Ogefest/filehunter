@@ -1,8 +1,8 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
-import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.MimeUtils;
+import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.SearchResult;
 
 import javax.inject.Inject;

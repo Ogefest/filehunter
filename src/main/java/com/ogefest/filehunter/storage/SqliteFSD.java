@@ -6,7 +6,6 @@ import java.io.File;
 import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,7 +89,7 @@ public class SqliteFSD implements FileSystemDatabase {
 
         int parentId = getParentIdByPath(path, index);
 
-        String pathName = pathElems[pathElems.length-1];
+        String pathName = pathElems[pathElems.length - 1];
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
@@ -261,7 +260,7 @@ public class SqliteFSD implements FileSystemDatabase {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, FTSStatus.TO_REMOVE.getValue());
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 result.add(getById(rs.getInt("id")));
             }
         } catch (SQLException e) {
@@ -280,7 +279,7 @@ public class SqliteFSD implements FileSystemDatabase {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, FTSStatus.TO_ADD.getValue());
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 result.add(getById(rs.getInt("id")));
             }
         } catch (SQLException e) {
@@ -307,13 +306,13 @@ public class SqliteFSD implements FileSystemDatabase {
     }
 
     @Override
-    public void closeReindexingSession(int sessionId,DirectoryIndex index) {
+    public void closeReindexingSession(int sessionId, DirectoryIndex index) {
 
         String sql = "UPDATE reindexsync SET is_finished = ? WHERE ident = ? AND indexname = ?";
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1,1);
+            preparedStatement.setInt(1, 1);
             preparedStatement.setInt(2, sessionId);
             preparedStatement.setString(3, index.getName());
             preparedStatement.executeUpdate();
@@ -324,7 +323,7 @@ public class SqliteFSD implements FileSystemDatabase {
             preparedStatement.setString(2, index.getName());
 
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
+            while (rs.next()) {
                 String sql3 = "UPDATE filesystem SET fts_status = ?, is_visible=0 WHERE reindex_counter = ? AND storage = ?";
                 preparedStatement = conn.prepareStatement(sql3);
                 preparedStatement.setInt(1, FTSStatus.TO_REMOVE.getValue());
@@ -372,7 +371,7 @@ public class SqliteFSD implements FileSystemDatabase {
                 break;
             }
 
-        } while(true);
+        } while (true);
 
         return result;
     }

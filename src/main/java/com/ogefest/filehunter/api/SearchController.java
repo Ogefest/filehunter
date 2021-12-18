@@ -28,7 +28,7 @@ public class SearchController {
         String kkey = "";
         for (String k : abc.keySet()) {
             if (k.indexOf("filter[") == 0) {
-                kkey = k.substring(7, k.length()-1);
+                kkey = k.substring(7, k.length() - 1);
                 filters.put(kkey, abc.getFirst(k));
             }
         }

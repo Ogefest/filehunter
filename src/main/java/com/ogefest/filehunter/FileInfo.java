@@ -1,10 +1,6 @@
 package com.ogefest.filehunter;
 
-import java.io.File;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Locale;
-import java.util.zip.CRC32;
 
 public class FileInfo {
 
@@ -34,7 +30,7 @@ public class FileInfo {
         if (elems.length < 2) {
             return "";
         }
-        if (elems[elems.length-1].length() > 5) {
+        if (elems[elems.length - 1].length() > 5) {
             return "";
         }
         return elems[elems.length - 1];
@@ -53,7 +49,7 @@ public class FileInfo {
     }
 
     public String getPath() {
-        return  path;
+        return path;
     }
 
     public String getIndexName() {
@@ -75,7 +71,6 @@ public class FileInfo {
     public long getSize() {
         return fileAttributes.getSize();
     }
-
 
 
 }

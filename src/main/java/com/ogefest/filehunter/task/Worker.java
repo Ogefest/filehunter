@@ -11,11 +11,11 @@ import java.util.ArrayList;
 
 public class Worker {
 
+    private static final Logger LOG = Logger.getLogger(Worker.class);
     private Thread thread;
     private boolean isBusy = false;
     private Configuration conf;
     private Task currentTask;
-    private static final Logger LOG = Logger.getLogger(Worker.class);
 
     public Worker(Configuration conf) {
         this.conf = conf;
@@ -34,7 +34,7 @@ public class Worker {
                 IndexWrite indexWrite = new IndexWrite(conf);
                 FileSystemDatabase db = new SqliteFSD(conf);
 
-                for(Task t : todo) {
+                for (Task t : todo) {
                     currentTask = t;
                     LOG.info("Task " + t.getClass().getName() + " started");
 

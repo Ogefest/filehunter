@@ -6,7 +6,7 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.miscellaneous.TrimFilter;
 
-public class FHAnalyzer extends Analyzer  {
+public class FHAnalyzer extends Analyzer {
     @Override
     protected TokenStreamComponents createComponents(String s) {
         Tokenizer tokenizer = new FHTokenizer();

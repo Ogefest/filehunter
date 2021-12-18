@@ -78,7 +78,7 @@ public class IndexRead {
 //            Query query = parser.parse("ext:JPG");
 //            Query query = new QueryParser("path", analyzer);
             TopDocs hits = searcher.search(query, Integer.MAX_VALUE);
-            for(ScoreDoc scoreDoc : hits.scoreDocs) {
+            for (ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
                 result.add(new FileInfoLucene(doc));
             }
@@ -141,7 +141,7 @@ public class IndexRead {
             Query searchQuery = finalQuery.build();
 
             TopDocs hits = searcher.search(searchQuery, 100);
-            for(ScoreDoc scoreDoc : hits.scoreDocs) {
+            for (ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
 
                 FileInfoLucene finfo = new FileInfoLucene(doc);
@@ -159,7 +159,7 @@ public class IndexRead {
 
     private void addSingleFilters(BooleanQuery.Builder query, HashMap<String, String> queryFilters) {
 
-        String supportedFields[] = { "index", "ext", "name", "content", "path" };
+        String supportedFields[] = {"index", "ext", "name", "content", "path"};
         List<String> supportedFilters = Arrays.asList(supportedFields);
 
         for (String k : supportedFilters) {

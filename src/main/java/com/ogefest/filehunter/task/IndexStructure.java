@@ -1,6 +1,8 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.DirectoryIndex;
+import com.ogefest.filehunter.DirectoryIndexStorage;
+import com.ogefest.filehunter.FileInfoLucene;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.IndexWrite;
 import org.jboss.logging.Logger;
@@ -14,16 +16,13 @@ import java.util.HashMap;
 
 public class IndexStructure extends Task {
 
+    private static final Logger LOG = Logger.getLogger(IndexStructure.class);
     private IndexWrite indexStorage;
     private IndexRead indexRead;
     private DirectoryIndex directoryIndex;
-
     private HashMap<String, String> fsStructure = new HashMap<>();
     private HashMap<String, FileInfoLucene> indexed = new HashMap<>();
-
     private String currentDirectoryIndexing = "";
-
-    private static final Logger LOG = Logger.getLogger(IndexStructure.class);
 
     public IndexStructure(DirectoryIndex directoryIndex) {
         this.directoryIndex = directoryIndex;

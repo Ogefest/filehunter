@@ -3,7 +3,6 @@ package com.ogefest.filehunter.api;
 import com.ogefest.filehunter.App;
 import com.ogefest.filehunter.DirectoryIndex;
 import com.ogefest.filehunter.DirectoryIndexStorage;
-import com.ogefest.filehunter.task.IndexStructure;
 import com.ogefest.filehunter.task.ReindexStructure;
 import com.ogefest.filehunter.task.RemoveIndex;
 

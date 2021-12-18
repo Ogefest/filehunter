@@ -15,6 +15,10 @@ public class DirectoryIndex {
     private String lastStructureIndexed;
     private String lastMetadataIndexed;
 
+    public DirectoryIndex() {
+
+    }
+
     public ArrayList<String> getPath() {
         return path;
     }
@@ -73,7 +77,7 @@ public class DirectoryIndex {
 
     public LocalDateTime getLastStructureIndexed() {
         if (lastStructureIndexed == null) {
-            return LocalDateTime.of(2000,1,1,0,0);
+            return LocalDateTime.of(2000, 1, 1, 0, 0);
         }
         return LocalDateTime.parse(lastStructureIndexed, DateTimeFormatter.ISO_DATE_TIME);
 //        return lastStructureIndexed;
@@ -85,7 +89,7 @@ public class DirectoryIndex {
 
     public LocalDateTime getLastMetadataIndexed() {
         if (lastMetadataIndexed == null) {
-            return LocalDateTime.of(2000,1,1,0,0);
+            return LocalDateTime.of(2000, 1, 1, 0, 0);
         }
         return LocalDateTime.parse(lastMetadataIndexed, DateTimeFormatter.ISO_DATE_TIME);
 //        return lastMetadataIndexed;
@@ -93,10 +97,6 @@ public class DirectoryIndex {
 
     public void setLastMetadataIndexed(LocalDateTime lastMetadataIndexed) {
         this.lastMetadataIndexed = lastMetadataIndexed.format(DateTimeFormatter.ISO_DATE_TIME);
-    }
-
-    public DirectoryIndex() {
-
     }
 
 }

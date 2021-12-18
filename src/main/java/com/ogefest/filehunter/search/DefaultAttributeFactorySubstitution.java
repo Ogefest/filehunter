@@ -37,14 +37,14 @@ import org.apache.lucene.util.AttributeImpl;
 @TargetClass(className = "org.apache.lucene.util.AttributeFactory$DefaultAttributeFactory")
 public final class DefaultAttributeFactorySubstitution {
 
-    public DefaultAttributeFactorySubstitution() {}
+    public DefaultAttributeFactorySubstitution() {
+    }
 
     @Substitute
     public AttributeImpl createAttributeInstance(Class<? extends Attribute> attClass) {
         if (attClass == BoostAttribute.class) {
             return new BoostAttributeImpl();
-        }
-        else if (attClass == CharTermAttribute.class) {
+        } else if (attClass == CharTermAttribute.class) {
             return new CharTermAttributeImpl();
         }
 //        else if (...) {

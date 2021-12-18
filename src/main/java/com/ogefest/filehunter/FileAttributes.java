@@ -1,7 +1,6 @@
 package com.ogefest.filehunter;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 
 public class FileAttributes {
 

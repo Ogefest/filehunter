@@ -1,6 +1,9 @@
 package com.ogefest.filehunter.search;
 
-import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.Configuration;
+import com.ogefest.filehunter.FHAnalyzer;
+import com.ogefest.filehunter.FileInfoLucene;
+import com.ogefest.filehunter.FileType;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -105,12 +108,12 @@ public class IndexWrite {
         }
     }
 
-    public List<String> analyze(String text, Analyzer analyzer) throws IOException{
+    public List<String> analyze(String text, Analyzer analyzer) throws IOException {
         List<String> result = new ArrayList<String>();
         TokenStream tokenStream = analyzer.tokenStream("path", text);
         CharTermAttribute attr = tokenStream.addAttribute(CharTermAttribute.class);
         tokenStream.reset();
-        while(tokenStream.incrementToken()) {
+        while (tokenStream.incrementToken()) {
             result.add(attr.toString());
         }
         return result;
@@ -124,14 +127,14 @@ public class IndexWrite {
         doc.add(new StringField("id", fileInfoLucene.getUuid(), Field.Store.YES));
         doc.add(new TextField("path", fileInfoLucene.getPath(), Field.Store.YES));
 
-        doc.add(new LongPoint("last_modified", fileInfoLucene.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
-        doc.add(new StoredField("last_modified", fileInfoLucene.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
+        doc.add(new LongPoint("last_modified", fileInfoLucene.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        doc.add(new StoredField("last_modified", fileInfoLucene.getLastModified().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
 
-        doc.add(new LongPoint("created", fileInfoLucene.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
-        doc.add(new StoredField("created", fileInfoLucene.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() ));
+        doc.add(new LongPoint("created", fileInfoLucene.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
+        doc.add(new StoredField("created", fileInfoLucene.getCreated().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
 
-        doc.add(new LongPoint("size", fileInfoLucene.getSize() ));
-        doc.add(new StoredField("size", fileInfoLucene.getSize() ));
+        doc.add(new LongPoint("size", fileInfoLucene.getSize()));
+        doc.add(new StoredField("size", fileInfoLucene.getSize()));
 
         doc.add(new LongPoint("metaindexed", fileInfoLucene.getLastMetaIndexed().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));
         doc.add(new StoredField("metaindexed", fileInfoLucene.getLastMetaIndexed().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()));

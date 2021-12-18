@@ -30,7 +30,7 @@ public class Configuration {
             if (key.indexOf("filehunter") == 0) {
                 configuration.put(key.substring(11), envs.get(key));
             }
-         }
+        }
 
     }
 

@@ -1,6 +1,8 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.DirectoryIndex;
+import com.ogefest.filehunter.FileInfoLucene;
+import com.ogefest.filehunter.FileType;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.IndexWrite;
 import io.quarkus.tika.TikaParseException;
@@ -19,19 +21,17 @@ import java.util.Arrays;
 
 public class IndexMetadata extends Task {
 
+    private static final Logger LOG = Logger.getLogger(IndexMetadata.class);
     private DirectoryIndex directoryIndex;
     private IndexWrite indexStorage;
     private IndexRead indexRead;
     private ArrayList<String> contentExtensions;
-
     private TikaParser tikaParser;
-
-    private static final Logger LOG = Logger.getLogger(IndexMetadata.class);
 
     public IndexMetadata(DirectoryIndex directoryIndex) {
         this.directoryIndex = directoryIndex;
 
-        contentExtensions = new ArrayList<>(Arrays.asList("pdf","doc","docx", "xls", "xlsx", "odt", "rtf", "txt", "csv"));
+        contentExtensions = new ArrayList<>(Arrays.asList("pdf", "doc", "docx", "xls", "xlsx", "odt", "rtf", "txt", "csv"));
 
 //        this.indexRead = indexRead;
 //        this.indexStorage = indexStorage;
@@ -101,7 +101,7 @@ public class IndexMetadata extends Task {
 
     private String plainContent(String filename) throws IOException, TikaException, SAXException, TikaParseException {
 
-        try  {
+        try {
             InputStream stream = new FileInputStream(filename);
             return tikaParser.parse(stream).getText();
         } catch (Exception e) {

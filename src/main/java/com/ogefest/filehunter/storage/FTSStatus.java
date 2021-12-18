@@ -6,10 +6,13 @@ public enum FTSStatus {
     TO_ADD(2),
     TO_REMOVE(3);
 
+    private final int value;
+
     FTSStatus(final int newValue) {
         value = newValue;
     }
 
-    private final int value;
-    public int getValue() { return value; }
+    public int getValue() {
+        return value;
+    }
 }

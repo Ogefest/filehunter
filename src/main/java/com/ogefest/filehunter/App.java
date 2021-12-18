@@ -3,9 +3,10 @@ package com.ogefest.filehunter;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.filehunter.storage.SqliteFSD;
-import com.ogefest.filehunter.task.*;
+import com.ogefest.filehunter.task.ReindexStructure;
+import com.ogefest.filehunter.task.Task;
+import com.ogefest.filehunter.task.Worker;
 import io.quarkus.scheduler.Scheduled;
-import org.jboss.logging.Logger;
 
 import javax.inject.Singleton;
 import java.time.LocalDateTime;
@@ -34,7 +35,7 @@ public class App {
         tasks.add(t);
     }
 
-    @Scheduled(every="10s")
+    @Scheduled(every = "10s")
     protected void checkRecurringIndexing() {
 
         Thread.currentThread().setName("Add tasks");
@@ -64,7 +65,7 @@ public class App {
     }
 
 
-    @Scheduled(every="3s")
+    @Scheduled(every = "3s")
     public void tasks() {
 
         Thread.currentThread().setName("Check queue");

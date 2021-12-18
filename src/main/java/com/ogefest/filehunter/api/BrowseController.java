@@ -4,8 +4,6 @@ import com.ogefest.filehunter.App;
 import com.ogefest.filehunter.DirectoryIndexStorage;
 import com.ogefest.filehunter.FileInfo;
 import com.ogefest.filehunter.FileItem;
-import com.ogefest.filehunter.search.IndexRead;
-import com.ogefest.filehunter.search.SearchResult;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.filehunter.storage.SqliteFSDReadOnly;
 
@@ -13,11 +11,7 @@ import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Path("/browse")
 public class BrowseController {
