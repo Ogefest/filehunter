@@ -30,13 +30,15 @@ public class Worker {
             @Override
             public void run() {
 
-                IndexRead indexRead = new IndexRead(conf);
-                IndexWrite indexWrite = new IndexWrite(conf);
-                FileSystemDatabase db = new SqliteFSD(conf);
 
                 for (Task t : todo) {
                     currentTask = t;
                     LOG.info("Task " + t.getClass().getName() + " started");
+
+                    IndexRead indexRead = new IndexRead(conf);
+                    IndexWrite indexWrite = new IndexWrite(conf);
+                    FileSystemDatabase db = new SqliteFSD(conf);
+
 
                     currentTask.setConfiguration(conf);
                     currentTask.setIndexes(indexWrite, indexRead);
@@ -44,13 +46,17 @@ public class Worker {
 
                     currentTask.run();
 
+                    indexRead.closeIndex();
+                    indexWrite.closeIndex();
+                    db.closeConnection();
+
                     LOG.info("Task " + t.getClass().getName() + " finished");
                     currentTask = null;
+
+
                 }
 
-                indexRead.closeIndex();
-                indexWrite.closeIndex();
-                db.closeConnection();
+
 
                 isBusy = false;
 

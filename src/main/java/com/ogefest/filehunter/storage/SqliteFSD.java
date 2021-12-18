@@ -38,6 +38,7 @@ public class SqliteFSD implements FileSystemDatabase {
                     "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
                     "parent_id INTEGER NOT NULL,\n" +
                     "fname TEXT NOT NULL,\n" +
+                    "fpath TEXT,\n" +
                     "storage TEXT NOT NULL,\n" +
                     "fsize INTEGER,\n" +
                     "ftype TEXT,\n" +
@@ -63,6 +64,10 @@ public class SqliteFSD implements FileSystemDatabase {
             String indexSql3 = "CREATE INDEX IF NOT EXISTS filesystem_parent_IDX ON filesystem (parent_id)";
             stmt.execute(indexSql3);
 
+            stmt = conn.createStatement();
+            String indexSql4 = "CREATE INDEX IF NOT EXISTS filesystem_fpath_IDX ON filesystem (fpath)";
+            stmt.execute(indexSql4);
+
             String sql2 = "CREATE TABLE IF NOT EXISTS reindexsync (\n" +
                     "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
                     "ident INTEGER NOT NULL,\n" +
@@ -84,7 +89,7 @@ public class SqliteFSD implements FileSystemDatabase {
     @Override
     public FileInfo add(String path, FileAttributes attributes, DirectoryIndex index) {
 
-        String sql = "INSERT INTO filesystem (fname, storage, parent_id, fsize, ftype, flast_modified) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO filesystem (fname, storage, parent_id, fsize, ftype, flast_modified,fpath) VALUES(?,?,?,?,?,?,?)";
         String[] pathElems = path.split("/");
 
         int parentId = getParentIdByPath(path, index);
@@ -99,6 +104,7 @@ public class SqliteFSD implements FileSystemDatabase {
             pstmt.setLong(4, attributes.getSize());
             pstmt.setString(5, attributes.getType() == FileType.FILE ? "f" : "d");
             pstmt.setLong(6, attributes.getLastModified().toEpochSecond(ZoneOffset.UTC));
+            pstmt.setString(7, path);
 
             pstmt.executeUpdate();
 
@@ -352,28 +358,44 @@ public class SqliteFSD implements FileSystemDatabase {
     protected String getPathById(int id) {
         String result = "";
 
-        String sql = "SELECT fname,parent_id FROM filesystem WHERE id = ?";
-        int qid = id;
-        do {
-            try {
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setInt(1, qid);
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    result = "/" + rs.getString("fname") + result;
-                    qid = rs.getInt("parent_id");
-                } else {
-                    break;
-                }
+        String sql = "SELECT fpath FROM filesystem WHERE id = ?";
 
-            } catch (SQLException e) {
-                e.printStackTrace();
-                break;
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("fpath");
             }
-
-        } while (true);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return result;
+
+
+//        String sql = "SELECT fname,parent_id FROM filesystem WHERE id = ?";
+//        int qid = id;
+//        do {
+//            try {
+//                PreparedStatement pstmt = conn.prepareStatement(sql);
+//                pstmt.setInt(1, qid);
+//                ResultSet rs = pstmt.executeQuery();
+//                if (rs.next()) {
+//                    result = "/" + rs.getString("fname") + result;
+//                    qid = rs.getInt("parent_id");
+//                } else {
+//                    break;
+//                }
+//
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//                break;
+//            }
+//
+//        } while (true);
+//
+//        return result;
     }
 
     protected int getParentIdByPath(String path, DirectoryIndex index) {
@@ -394,29 +416,47 @@ public class SqliteFSD implements FileSystemDatabase {
     }
 
     protected int getIdByPath(String path, DirectoryIndex index) {
-        String[] pathElems = path.substring(1).split("/");
 
-        int parentId = 0;
-        String sql = "SELECT id FROM filesystem WHERE fname = ? AND parent_id = ? AND storage = ?";
-        for (String elem : pathElems) {
-            try {
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, elem);
-                pstmt.setInt(2, parentId);
-                pstmt.setString(3, index.getName());
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    parentId = rs.getInt("id");
-                } else {
-                    return 0;
-                }
 
-            } catch (SQLException e) {
-                e.printStackTrace();
+        String sql = "SELECT id FROM filesystem WHERE fpath = ? AND storage = ?";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, path);
+            pstmt.setString(2, index.getName());
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id");
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        return parentId;
+        return 0;
+
+//        String[] pathElems = path.substring(1).split("/");
+//        int parentId = 0;
+//        String sql = "SELECT id FROM filesystem WHERE fname = ? AND parent_id = ? AND storage = ?";
+//        for (String elem : pathElems) {
+//            try {
+//                PreparedStatement pstmt = conn.prepareStatement(sql);
+//                pstmt.setString(1, elem);
+//                pstmt.setInt(2, parentId);
+//                pstmt.setString(3, index.getName());
+//                ResultSet rs = pstmt.executeQuery();
+//                if (rs.next()) {
+//                    parentId = rs.getInt("id");
+//                } else {
+//                    return 0;
+//                }
+//
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return parentId;
     }
 
     private FileInfo getById(int id) {

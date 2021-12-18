@@ -8,6 +8,7 @@ public class EngineItem {
     protected String name;
     protected String path;
     protected EngineItemAttribute attributes;
+    protected String ext;
 
     public EngineItem(String path) {
         this.path = pathCleanup(path);
@@ -16,10 +17,16 @@ public class EngineItem {
         attributes = new EngineItemAttribute();
     }
 
+
+
     public EngineItem(String path, EngineItemAttribute attributes) {
         this.path = pathCleanup(path);
         updateName();
         this.attributes = attributes;
+    }
+
+    public String getExt() {
+        return ext;
     }
 
     public String getName() {
@@ -81,6 +88,11 @@ public class EngineItem {
 
         File f = new File(path);
         name = f.getName();
+
+        String[] extElems = name.split("\\.");
+        if (extElems.length >= 2) {
+            ext = extElems[extElems.length-1];
+        }
 
     }
 

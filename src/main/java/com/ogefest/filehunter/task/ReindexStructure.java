@@ -91,6 +91,20 @@ public class ReindexStructure extends Task {
 
     protected void addToDatabase(FileObject obj) {
 
+        if (index.getIgnoreExtension().contains(obj.getEngineItem().getExt())) {
+            return;
+        }
+        for (String pathToCheck : index.getIgnorePath()) {
+            if (obj.getEngineItem().getPath().indexOf(pathToCheck) == 0) {
+                return;
+            }
+        }
+        for (String patternToCheck : index.getIgnorePhrase()) {
+            if (obj.getEngineItem().getPath().indexOf(patternToCheck) != -1) {
+                return;
+            }
+        }
+
         FileAttributes fa = new FileAttributes();
         fa.setSize(obj.getEngineItem().getSize());
         fa.setLastModified(obj.getEngineItem().getLastModified());
