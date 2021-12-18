@@ -3,6 +3,7 @@ package com.ogefest.filehunter.task;
 import com.ogefest.filehunter.DirectoryIndex;
 import com.ogefest.filehunter.FileAttributes;
 import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.FileType;
 import com.ogefest.filehunter.storage.FTSStatus;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
@@ -93,17 +94,20 @@ public class ReindexStructure extends Task {
 
         FileAttributes fa = new FileAttributes();
         fa.setSize(obj.getEngineItem().getSize());
+        fa.setLastModified(obj.getEngineItem().getLastModified());
+        fa.setType(obj.getEngineItem().isDirectory() ? FileType.DIRECTORY : FileType.FILE);
 
-//        FileInfo fi = new FileInfo(obj.getEngineItem().getPath(), index, fa);
-        FileInfo fi = db.get(obj.getEngineItem().getPath(), index);
-        if (!db.exists(fi)) {
-            db.add(fi, reindexTimestamp);
-            fi = db.get(obj.getEngineItem().getPath(), index);
+        if (!db.exists(obj.getEngineItem().getPath(), index)) {
 
-            db.setCurrentFTSStatus(fi, FTSStatus.TO_ADD.getValue());
-            db.setCurrentStatus(fi, reindexTimestamp);
+            FileInfo fi = db.add(obj.getEngineItem().getPath(), fa, index);
+            if (fi != null) {
+                db.setCurrentFTSStatus(fi, FTSStatus.TO_ADD.getValue());
+                db.setCurrentStatus(fi, reindexTimestamp);
+            }
         } else {
+            FileInfo fi = db.get(obj.getEngineItem().getPath(), index);
             db.setCurrentStatus(fi, reindexTimestamp);
+            db.setCurrentAttributes(fi, fa);
         }
 
     }

@@ -8,6 +8,9 @@ import org.apache.commons.net.ftp.FTPReply;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 public class Ftp extends Engine {
@@ -95,6 +98,7 @@ public class Ftp extends Engine {
                 attribute.isFile = f.isFile();
                 attribute.isDirectory = f.isDirectory();
                 attribute.size = f.getSize();
+                attribute.lastModified = LocalDateTime.ofInstant(f.getTimestamp().toInstant(), ZoneId.systemDefault());
 
                 items.add(new EngineItem(pathToList + "/" + f.getName(), attribute));
             }

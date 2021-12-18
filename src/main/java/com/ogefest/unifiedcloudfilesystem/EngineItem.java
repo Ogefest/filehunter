@@ -42,10 +42,6 @@ public class EngineItem {
         return attributes.lastModified;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return attributes.creationTime;
-    }
-
     public String getPath() {
         return path;
     }

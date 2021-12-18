@@ -9,6 +9,8 @@ import com.ogefest.unifiedcloudfilesystem.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,6 +89,7 @@ public class WebDav extends Engine {
                 attribute.isFile = !res.isDirectory();
                 attribute.isDirectory = res.isDirectory();
                 attribute.size = res.getContentLength().longValue();
+                attribute.lastModified = LocalDateTime.ofInstant(res.getModified().toInstant(), ZoneId.systemDefault());
 
                 result.add(new EngineItem(filePath, attribute));
             }

@@ -1,13 +1,13 @@
 package com.ogefest.filehunter.storage;
 
-import com.ogefest.filehunter.Configuration;
-import com.ogefest.filehunter.DirectoryIndex;
-import com.ogefest.filehunter.FileAttributes;
-import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.*;
 
 import java.io.File;
 import java.sql.*;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -41,6 +41,8 @@ public class SqliteFSD implements FileSystemDatabase {
                     "fname TEXT NOT NULL,\n" +
                     "storage TEXT NOT NULL,\n" +
                     "fsize INTEGER,\n" +
+                    "ftype TEXT,\n" +
+                    "flast_modified INTEGER,\n" +
                     "fts_status INTEGER DEFAULT 0,\n" +
                     "is_visible INTEGER DEFAULT 1,\n" +
                     "fattributes TEXT,\n" +
@@ -81,29 +83,34 @@ public class SqliteFSD implements FileSystemDatabase {
     }
 
     @Override
-    public void add(FileInfo fi, int indexCounter) {
+    public FileInfo add(String path, FileAttributes attributes, DirectoryIndex index) {
 
-        String sql = "INSERT INTO filesystem (fname, storage, parent_id, fsize, reindex_counter) VALUES(?,?,?,?, ?)";
-        String[] pathElems = fi.getPath().split("/");
+        String sql = "INSERT INTO filesystem (fname, storage, parent_id, fsize, ftype, flast_modified) VALUES(?,?,?,?,?,?)";
+        String[] pathElems = path.split("/");
+
+        int parentId = getParentIdByPath(path, index);
 
         String pathName = pathElems[pathElems.length-1];
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
 
             pstmt.setString(1, pathName);
-            pstmt.setString(2, fi.getIndexName());
-            pstmt.setInt(3, fi.getParentId());
-            pstmt.setInt(4, 0);
-            pstmt.setInt(5, indexCounter);
+            pstmt.setString(2, index.getName());
+            pstmt.setInt(3, parentId);
+            pstmt.setLong(4, attributes.getSize());
+            pstmt.setString(5, attributes.getType() == FileType.FILE ? "f" : "d");
+            pstmt.setLong(6, attributes.getLastModified().toEpochSecond(ZoneOffset.UTC));
+
             pstmt.executeUpdate();
 
             int insertedId = pstmt.getGeneratedKeys().getInt(1);
-            fi = getById(insertedId);
+            return getById(insertedId);
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        return null;
     }
 
     @Override
@@ -185,6 +192,15 @@ public class SqliteFSD implements FileSystemDatabase {
     }
 
     @Override
+    public boolean exists(String path, DirectoryIndex index) {
+        int itemId = getIdByPath(path, index);
+        if (itemId > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public void setCurrentStatus(FileInfo fi, int counter) {
         String sql = "UPDATE filesystem SET reindex_counter = ? WHERE id = ?";
 
@@ -214,6 +230,26 @@ public class SqliteFSD implements FileSystemDatabase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void setCurrentAttributes(FileInfo fi, FileAttributes attributes) {
+
+        String sql = "UPDATE filesystem SET fsize = ?, flast_modified = ? WHERE id = ?";
+
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = conn.prepareStatement(sql);
+
+            preparedStatement.setLong(1, attributes.getSize());
+            preparedStatement.setLong(2, attributes.getLastModified().toEpochSecond(ZoneOffset.UTC));
+            preparedStatement.setInt(3, fi.getId());
+
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -394,12 +430,17 @@ public class SqliteFSD implements FileSystemDatabase {
 
                 String path = getPathById(rs.getInt("id"));
 
+                FileAttributes fa = new FileAttributes();
+                fa.setSize(rs.getLong("fsize"));
+                fa.setType(rs.getString("ftype").equals("d") ? FileType.DIRECTORY : FileType.FILE);
+                fa.setLastModified(LocalDateTime.ofEpochSecond(rs.getLong("flast_modified"), 0, ZoneOffset.UTC));
+
                 FileInfo fi = new FileInfo(
                         rs.getInt("id"),
                         rs.getInt("parent_id"),
                         path,
                         rs.getString("storage"),
-                        new FileAttributes()
+                        fa
                 );
 
                 return fi;

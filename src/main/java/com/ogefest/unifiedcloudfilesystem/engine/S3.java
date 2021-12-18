@@ -120,6 +120,7 @@ public class S3 extends Engine {
                 attribute.isFile = !item.isDir();
                 attribute.isDirectory = item.isDir();
                 attribute.size = item.size();
+                attribute.lastModified = item.lastModified().toLocalDateTime();
 
                 EngineItem ei = new EngineItem(item.objectName(), attribute);
                 result.add(ei);

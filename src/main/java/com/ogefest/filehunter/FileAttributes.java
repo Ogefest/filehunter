@@ -1,11 +1,22 @@
 package com.ogefest.filehunter;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class FileAttributes {
 
     private long size = 0;
     private FileType type;
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    private LocalDateTime lastModified;
 
     public long getSize() {
         return size;

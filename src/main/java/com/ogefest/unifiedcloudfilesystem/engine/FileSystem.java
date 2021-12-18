@@ -3,6 +3,9 @@ package com.ogefest.unifiedcloudfilesystem.engine;
 import com.ogefest.unifiedcloudfilesystem.*;
 
 import java.io.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 public class FileSystem extends Engine {
@@ -68,6 +71,7 @@ public class FileSystem extends Engine {
                 attribute.isFile = f.isFile();
                 attribute.isDirectory = f.isDirectory();
                 attribute.size = f.length();
+                attribute.lastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(f.lastModified()), ZoneId.systemDefault());
 
                 EngineItem tmp = new EngineItem(engineItem.getPath() + "/" + f.getName(), attribute);
                 result.add(tmp);

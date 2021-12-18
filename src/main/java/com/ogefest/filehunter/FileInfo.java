@@ -1,6 +1,8 @@
 package com.ogefest.filehunter;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.zip.CRC32;
 
@@ -38,12 +40,6 @@ public class FileInfo {
         return elems[elems.length - 1];
     }
 
-//    public String getHash() {
-//        CRC32 crc32 = new CRC32();
-//        crc32.update(path.getBytes());
-//        return String.format(Locale.US,"%08X", crc32.getValue());
-//    }
-
     public int getId() {
         return id;
     }
@@ -65,11 +61,19 @@ public class FileInfo {
     }
 
     public boolean isFile() {
-        return true;
+        return fileAttributes.getType() == FileType.FILE;
     }
 
     public boolean isDirectory() {
-        return true;
+        return fileAttributes.getType() == FileType.DIRECTORY;
+    }
+
+    public LocalDateTime getLastModified() {
+        return fileAttributes.getLastModified();
+    }
+
+    public long getSize() {
+        return fileAttributes.getSize();
     }
 
 

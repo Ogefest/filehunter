@@ -1,19 +1,25 @@
 package com.ogefest.filehunter;
 
+import java.time.format.DateTimeFormatter;
+
 public class FileItem {
 
     private String name;
     private String path;
     private String index;
-    private int size;
+    private long size;
     private String ext;
     private String type;
+    private String lastModified;
+
 
     public FileItem(FileInfo fi) {
         index = fi.getIndexName();
         path = fi.getPath();
         name = fi.getName();
         ext = fi.getExt();
+        size = fi.getSize();
+        lastModified = fi.getLastModified().format(DateTimeFormatter.ISO_DATE_TIME);
 
         type = "f";
         if (fi.isDirectory()) {
@@ -21,6 +27,13 @@ public class FileItem {
         }
     }
 
+    public String getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
+    }
 
     public String getName() {
         return name;
@@ -46,11 +59,11 @@ public class FileItem {
         this.index = index;
     }
 
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(long size) {
         this.size = size;
     }
 
