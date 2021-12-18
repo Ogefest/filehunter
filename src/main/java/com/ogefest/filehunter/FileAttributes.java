@@ -7,6 +7,7 @@ public class FileAttributes {
 
     private long size = 0;
     private FileType type;
+    private LocalDateTime lastModified;
 
     public LocalDateTime getLastModified() {
         return lastModified;
@@ -15,8 +16,6 @@ public class FileAttributes {
     public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;
     }
-
-    private LocalDateTime lastModified;
 
     public long getSize() {
         return size;
