@@ -44,6 +44,7 @@ public class DownloadController {
 
         if (obj.getEngineItem().isDirectory()) {
             Response.ResponseBuilder response = Response.serverError();
+            response.entity("Internal error");
             return response.build();
         }
 
