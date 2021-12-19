@@ -95,6 +95,14 @@ public class UnifiedCloudFileSystem {
     public FileObject getByPath(String engineName, String path) {
 
         EngineItemAttribute eia = new EngineItemAttribute();
+        /*
+        ROOT doesnt have parent so listing for files in parent to get current
+        file in path make no sense
+         */
+        if (path.equals("/")) {
+            eia.isDirectory = true;
+            return new FileObject(engineName, new EngineItem(path, eia));
+        }
 
         FileObject fo = new FileObject(engineName, new EngineItem(path, eia));
         EngineItem parent = fo.getEngineItem().getParent();

@@ -36,6 +36,12 @@ public class DownloadController {
 
 
         FileObject obj = ucfs.getByPath(indexName, path);
+        if (obj == null) {
+            Response.ResponseBuilder response = Response.status(404, "Not found");
+            response.entity("File not found");
+            return response.build();
+        }
+
         if (obj.getEngineItem().isDirectory()) {
             Response.ResponseBuilder response = Response.serverError();
             return response.build();
