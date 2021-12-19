@@ -15,6 +15,7 @@ public class SqliteFSD implements FileSystemDatabase {
     protected Configuration conf;
     protected Connection conn;
     protected String dbFilePath = null;
+    protected boolean isInMemory = true;
 
     public SqliteFSD(Configuration conf) {
         this.conf = conf;
@@ -23,14 +24,19 @@ public class SqliteFSD implements FileSystemDatabase {
 
         String connectionUrl = conf.getValue("DB_URL");
         if (connectionUrl == null || connectionUrl.equals("")) {
-            connectionUrl = "jdbc:sqlite::memory:";
+            if (isInMemory) {
+                connectionUrl = "jdbc:sqlite::memory:";
+            } else {
+                connectionUrl = "jdbc:sqlite:" + dbFilePath;
+            }
         }
 
         try {
             Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection(connectionUrl);
             File f = new File(dbFilePath);
-            if (f.exists()) {
+            f = new File(dbFilePath);
+            if (isInMemory && f.exists()) {
                 conn.createStatement().executeUpdate("restore from " + dbFilePath);
             }
 
@@ -77,6 +83,11 @@ public class SqliteFSD implements FileSystemDatabase {
                     ")";
             stmt = conn.createStatement();
             stmt.execute(sql2);
+
+
+//            String sql3 = "PRAGMA journal_mode=WAL";
+//            stmt = conn.createStatement();
+//            stmt.execute(sql3);
 
 
         } catch (SQLException e) {
@@ -347,7 +358,9 @@ public class SqliteFSD implements FileSystemDatabase {
     @Override
     public void closeConnection() {
         try {
-            conn.createStatement().executeUpdate("backup to " + dbFilePath);
+            if (isInMemory) {
+                conn.createStatement().executeUpdate("backup to " + dbFilePath);
+            }
             conn.close();
 
         } catch (SQLException e) {
@@ -373,29 +386,6 @@ public class SqliteFSD implements FileSystemDatabase {
 
         return result;
 
-
-//        String sql = "SELECT fname,parent_id FROM filesystem WHERE id = ?";
-//        int qid = id;
-//        do {
-//            try {
-//                PreparedStatement pstmt = conn.prepareStatement(sql);
-//                pstmt.setInt(1, qid);
-//                ResultSet rs = pstmt.executeQuery();
-//                if (rs.next()) {
-//                    result = "/" + rs.getString("fname") + result;
-//                    qid = rs.getInt("parent_id");
-//                } else {
-//                    break;
-//                }
-//
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//                break;
-//            }
-//
-//        } while (true);
-//
-//        return result;
     }
 
     protected int getParentIdByPath(String path, DirectoryIndex index) {

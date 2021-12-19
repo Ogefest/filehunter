@@ -1,9 +1,6 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.DirectoryIndex;
-import com.ogefest.filehunter.FileAttributes;
-import com.ogefest.filehunter.FileInfo;
-import com.ogefest.filehunter.FileType;
+import com.ogefest.filehunter.*;
 import com.ogefest.filehunter.storage.FTSStatus;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
@@ -27,18 +24,12 @@ public class ReindexStructure extends Task {
     public ReindexStructure(DirectoryIndex index) {
 
         this.index = index;
-
         reindexTimestamp = (int) (Instant.now().getEpochSecond());
 
-        /**
-         * @TODO This should be taken from DirectoryIndex there should be engine type and configuration
-         */
-        HashMap<String, String> confMap = new HashMap<>();
-        confMap.put("path", index.getPath().get(0));
-        EngineConfiguration ec = new EngineConfiguration(confMap);
-//
+        EngineConfiguration ec = new EngineConfiguration(index.getConfiguration());
+
         ucfs = new UnifiedCloudFileSystem();
-        ucfs.registerEngine(index.getName(), new FileSystem(ec));
+        ucfs.registerEngine(index.getName(), BackendEngineFactory.get(index.getType(), ec));
     }
 
     @Override

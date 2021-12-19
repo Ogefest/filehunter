@@ -24,7 +24,6 @@ public class App {
     public App() {
         conf = new Configuration();
         taskWorker = new Worker(conf);
-        dbStorage = new SqliteFSD(conf);
     }
 
     public Configuration getConfiguration() {
@@ -44,8 +43,6 @@ public class App {
             return;
         }
 
-//        FileSystemDatabase db = new SqliteFSD(conf);
-
         DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
         for (DirectoryIndex d : storage.getDirectories()) {
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
@@ -55,12 +52,7 @@ public class App {
                 storage.setDirectory(d);
             }
         }
-//        db.closeConnection();
-//
-//        DirectoryIndexStorage storage2 = new DirectoryIndexStorage(conf);
-//        for (DirectoryIndex d : storage.getDirectories()) {
-//                addTask(new IndexMetadata(d));
-//        }
+
 
     }
 

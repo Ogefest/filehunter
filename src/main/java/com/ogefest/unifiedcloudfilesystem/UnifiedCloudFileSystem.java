@@ -93,10 +93,31 @@ public class UnifiedCloudFileSystem {
     }
 
     public FileObject getByPath(String engineName, String path) {
-        EngineItemAttribute eia = new EngineItemAttribute();
-        eia.isDirectory = true;
 
-        return new FileObject(engineName, new EngineItem(path, eia));
+        EngineItemAttribute eia = new EngineItemAttribute();
+
+        FileObject fo = new FileObject(engineName, new EngineItem(path, eia));
+        EngineItem parent = fo.getEngineItem().getParent();
+        FileObject parentFileObject = new FileObject(engineName, parent);
+
+        try {
+            ArrayList<FileObject> listSingleObject = list(parentFileObject);
+            if (listSingleObject.size() > 0) {
+                for (FileObject item : listSingleObject) {
+                    if (item.getEngineItem().getPath().equals(path)) {
+                        return item;
+                    }
+                }
+                return null;
+            }
+            return null;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ResourceAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

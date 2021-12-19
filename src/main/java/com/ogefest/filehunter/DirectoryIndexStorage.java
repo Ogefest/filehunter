@@ -48,6 +48,7 @@ public class DirectoryIndexStorage {
 
     public void setDirectory(DirectoryIndex dir) {
         int index = -1;
+
         for (DirectoryIndex d : directories) {
             if (d.getName().equals(dir.getName())) {
                 index = directories.indexOf(d);
@@ -58,6 +59,11 @@ public class DirectoryIndexStorage {
         if (index == -1) {
             directories.add(dir);
         } else {
+
+            DirectoryIndex currentIndex = directories.get(index);
+            dir.setType(currentIndex.getType());
+            dir.setConfiguration(currentIndex.getConfiguration());
+
             directories.set(index, dir);
         }
 

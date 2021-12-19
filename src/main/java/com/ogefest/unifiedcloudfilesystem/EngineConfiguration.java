@@ -7,9 +7,17 @@ public class EngineConfiguration {
 
     private final HashMap<String, String> configuration;
 
-//    public Configuration(String input) {
-//
-//    }
+    public EngineConfiguration(String input) {
+        this.configuration = new HashMap<>();
+
+        String[] lines = input.split("\n");
+        for (String line : lines) {
+            String[] elems = line.split("=");
+            if (elems.length == 2) {
+                configuration.put(elems[0].trim(), elems[1].trim());
+            }
+        }
+    }
 
     public EngineConfiguration(HashMap<String, String> input) {
         this.configuration = input;

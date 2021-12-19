@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 public class DirectoryIndex {
     private String name;
-    private ArrayList<String> path = new ArrayList<>();
     private ArrayList<String> ignorePath = new ArrayList<>();
     private ArrayList<String> ignorePhrase = new ArrayList<>();
     private ArrayList<String> ignoreExtension = new ArrayList<>();
@@ -14,17 +13,27 @@ public class DirectoryIndex {
     private boolean extractMetadata = false;
     private String lastStructureIndexed;
     private String lastMetadataIndexed;
+    private String type;
+    private String configuration;
 
     public DirectoryIndex() {
 
     }
 
-    public ArrayList<String> getPath() {
-        return path;
+    public String getType() {
+        return type;
     }
 
-    public void setPath(ArrayList<String> path) {
-        this.path = path;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(String configuration) {
+        this.configuration = configuration;
     }
 
     public String getName() {

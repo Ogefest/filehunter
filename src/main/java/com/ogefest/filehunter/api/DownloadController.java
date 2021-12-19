@@ -1,15 +1,19 @@
 package com.ogefest.filehunter.api;
 
-import com.ogefest.filehunter.App;
-import com.ogefest.filehunter.MimeUtils;
+import com.ogefest.filehunter.*;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.SearchResult;
+import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
+import com.ogefest.unifiedcloudfilesystem.FileObject;
+import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
+import io.smallrye.mutiny.Uni;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
+import java.io.IOException;
 
 @Path("/download")
 public class DownloadController {
@@ -18,32 +22,43 @@ public class DownloadController {
     App app;
 
     @GET
-    @Path("/{uuid}")
-    public Response file(@PathParam("uuid") String uuid) {
+    @Path("/file")
+    public Response get(@QueryParam("path") String path, @QueryParam("index") String indexName ) {
 
-        IndexRead ir = app.getIndexForRead();
-        SearchResult res = ir.getByUuid(uuid);
-        if (res == null) {
-            throw new NotFoundException();
-        }
-        ir.closeIndex();
+        DirectoryIndexStorage indexStorage = new DirectoryIndexStorage(app.getConfiguration());
+        DirectoryIndex index = indexStorage.getByName(indexName);
 
-        File file = new File(res.getPath());
-        if (!file.isFile()) {
-            throw new BadRequestException("Only file available for download");
-        }
-        if (!file.exists()) {
-            throw new NotFoundException();
-        }
+        EngineConfiguration ec = new EngineConfiguration(index.getConfiguration());
 
-        Response.ResponseBuilder response = Response.ok(file);
-        if (MimeUtils.hasExtension(res.getExt())) {
-            response.type(MimeUtils.guessMimeTypeFromExtension(res.getExt()));
-        } else {
-            response.header("Content-Disposition", "attachment;filename=" + file.getName());
-            response.type(MediaType.APPLICATION_OCTET_STREAM);
+
+        UnifiedCloudFileSystem ucfs = new UnifiedCloudFileSystem();
+        ucfs.registerEngine(index.getName(), BackendEngineFactory.get(index.getType(), ec));
+
+
+        FileObject obj = ucfs.getByPath(indexName, path);
+        if (obj.getEngineItem().isDirectory()) {
+            Response.ResponseBuilder response = Response.serverError();
+            return response.build();
         }
 
+        try {
+
+            Response.ResponseBuilder response = Response.ok(ucfs.read(obj));
+            if (MimeUtils.hasExtension(obj.getEngineItem().getExt())) {
+                response.type(MimeUtils.guessMimeTypeFromExtension(obj.getEngineItem().getExt()));
+            } else {
+                response.header("Content-Disposition", "attachment;filename=" + obj.getEngineItem().getName());
+                response.type(MediaType.APPLICATION_OCTET_STREAM);
+            }
+
+            return response.build();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Response.ResponseBuilder response = Response.serverError();
         return response.build();
     }
+
 }

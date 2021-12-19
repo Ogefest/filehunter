@@ -47,16 +47,12 @@ public class IndexController {
         if (newDirectoryIndex.getName().equals("")) {
             throw new BadRequestException("Name parameter is required");
         }
-        if (newDirectoryIndex.getPath().size() == 0) {
-            throw new BadRequestException("Path parameter is required ");
+        if (newDirectoryIndex.getConfiguration().length() == 0) {
+            throw new BadRequestException("Configuration parameter is required ");
         }
-        for (String p : newDirectoryIndex.getPath()) {
-            File f = new File(p);
-            if (!f.exists()) {
-                throw new BadRequestException("Path " + p + " not exists");
-            }
+        if (newDirectoryIndex.getType().length() == 0) {
+            throw new BadRequestException("Type parameter is required ");
         }
-
 
         DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
         storage.setDirectory(newDirectoryIndex);
