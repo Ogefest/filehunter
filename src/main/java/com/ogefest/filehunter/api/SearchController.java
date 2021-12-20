@@ -1,6 +1,7 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
+import com.ogefest.filehunter.FileItem;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.SearchResult;
 
@@ -21,7 +22,7 @@ public class SearchController {
     App app;
 
     @GET
-    public ArrayList<SearchResult> search(@QueryParam("q") String query, @Context UriInfo uinfo) {
+    public ArrayList<FileItem> search(@QueryParam("q") String query, @Context UriInfo uinfo) {
 
         MultivaluedMap<String, String> abc = uinfo.getQueryParameters();
         HashMap<String, String> filters = new HashMap<>();
@@ -34,7 +35,7 @@ public class SearchController {
         }
 
         IndexRead ir = new IndexRead(app.getConfiguration());
-        ArrayList<SearchResult> result = ir.query(query, filters);
+        ArrayList<FileItem> result = ir.query(query, filters);
 
         return result;
     }

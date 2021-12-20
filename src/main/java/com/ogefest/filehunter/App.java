@@ -3,6 +3,7 @@ package com.ogefest.filehunter;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.filehunter.storage.SqliteFSD;
+import com.ogefest.filehunter.task.ReindexFullText;
 import com.ogefest.filehunter.task.ReindexStructure;
 import com.ogefest.filehunter.task.Task;
 import com.ogefest.filehunter.task.Worker;
@@ -47,15 +48,13 @@ public class App {
         for (DirectoryIndex d : storage.getDirectories()) {
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
                 addTask(new ReindexStructure(d));
+                addTask(new ReindexFullText());
 
                 d.setLastStructureIndexed(LocalDateTime.now());
                 storage.setDirectory(d);
             }
         }
-
-
     }
-
 
     @Scheduled(every = "3s")
     public void tasks() {

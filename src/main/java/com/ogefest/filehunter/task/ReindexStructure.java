@@ -1,6 +1,7 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.search.IndexWrite;
 import com.ogefest.filehunter.storage.FTSStatus;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
@@ -48,20 +49,20 @@ public class ReindexStructure extends Task {
             e.printStackTrace();
         }
 
+        IndexWrite writer = getIndexWrite();
 
         ArrayList<FileInfo> itemsToClear = db.getItemsToClear();
         for (FileInfo fi : itemsToClear) {
-            /**
-             * @TODO remove from Lucene
-             */
+            writer.deleteDocument(String.valueOf(fi.getId()));
             db.clear(fi);
         }
-        ArrayList<FileInfo> itemsToReindex = db.getItemsToFullTextIndex();
-        for (FileInfo fi : itemsToReindex) {
-            /**
-             * @TODO add item to lucene
-             */
-        }
+//        ArrayList<FileInfo> itemsToReindex = db.getItemsToFullTextIndex();
+//        for (FileInfo fi : itemsToReindex) {
+//            /**
+//             * @TODO add item to lucene
+//             */
+//        }
+//        writer.closeIndex();
 
         db.closeReindexingSession(reindexTimestamp, index);
 

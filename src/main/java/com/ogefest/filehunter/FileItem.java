@@ -27,6 +27,19 @@ public class FileItem {
         }
     }
 
+    public FileItem(FileInfoLucene finfo) {
+        index = finfo.getIndexname();
+        path = finfo.getPath();
+        name = finfo.getName();
+        ext = finfo.getExt();
+        size = finfo.getSize();
+        lastModified = finfo.getLastModified().format(DateTimeFormatter.ISO_DATE_TIME);
+        type = "f";
+        if (finfo.getType() == FileType.DIRECTORY) {
+            type = "d";
+        }
+    }
+
     public String getLastModified() {
         return lastModified;
     }

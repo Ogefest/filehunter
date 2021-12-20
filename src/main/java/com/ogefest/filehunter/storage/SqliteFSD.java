@@ -291,7 +291,7 @@ public class SqliteFSD implements FileSystemDatabase {
     public ArrayList<FileInfo> getItemsToFullTextIndex() {
         ArrayList<FileInfo> result = new ArrayList<>();
 
-        String sql = "SELECT id FROM filesystem WHERE fts_status = ?";
+        String sql = "SELECT id FROM filesystem WHERE fts_status = ? LIMIT 5000";
         try {
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setInt(1, FTSStatus.TO_ADD.getValue());

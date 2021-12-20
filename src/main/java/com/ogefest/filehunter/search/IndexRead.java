@@ -3,6 +3,7 @@ package com.ogefest.filehunter.search;
 import com.ogefest.filehunter.Configuration;
 import com.ogefest.filehunter.FHAnalyzer;
 import com.ogefest.filehunter.FileInfoLucene;
+import com.ogefest.filehunter.FileItem;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -91,8 +92,8 @@ public class IndexRead {
         return result;
     }
 
-    public SearchResult getByUuid(String uuid) {
-        ArrayList<SearchResult> searchResults = query("id:" + uuid);
+    public FileItem getByUuid(String uuid) {
+        ArrayList<FileItem> searchResults = query("id:" + uuid);
 
         if (searchResults.size() == 0) {
             return null;
@@ -102,13 +103,13 @@ public class IndexRead {
     }
 
 
-    public ArrayList<SearchResult> query(String q) {
+    public ArrayList<FileItem> query(String q) {
         return query(q, new HashMap<>());
     }
 
-    public ArrayList<SearchResult> query(String q, HashMap<String, String> filters) {
+    public ArrayList<FileItem> query(String q, HashMap<String, String> filters) {
 
-        ArrayList<SearchResult> result = new ArrayList<>();
+        ArrayList<FileItem> result = new ArrayList<>();
         if (searcher == null) {
             return result;
         }
@@ -145,8 +146,8 @@ public class IndexRead {
                 Document doc = searcher.doc(scoreDoc.doc);
 
                 FileInfoLucene finfo = new FileInfoLucene(doc);
-                SearchResult sr = new SearchResult(finfo);
-                result.add(sr);
+                FileItem fi = new FileItem(finfo);
+                result.add(fi);
             }
         } catch (IOException e) {
             e.printStackTrace();

@@ -2,6 +2,7 @@ package com.ogefest.filehunter;
 
 import org.apache.lucene.document.Document;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
@@ -42,27 +43,16 @@ public class FileInfoLucene {
         this.content = doc.get("content");
     }
 
-    public FileInfoLucene(Path inputPath, BasicFileAttributes basicFileAttributes, DirectoryIndex directoryIndex) {
-        indexname = directoryIndex.getName();
-
-        type = basicFileAttributes.isDirectory() ? FileType.DIRECTORY : FileType.FILE;
-        uuid = UUID.nameUUIDFromBytes(inputPath.toAbsolutePath().toString().getBytes()).toString().replace("-", "");
-
-        Optional<String> opt = Optional.ofNullable(inputPath.getFileName().toString())
-                .filter(f -> f.contains("."))
-                .map(f -> f.substring(inputPath.getFileName().toString().lastIndexOf(".") + 1));
-
-        ext = "";
-        if (opt.isPresent()) {
-            ext = opt.get();
-        }
-
-        size = basicFileAttributes.size();
-        path = inputPath.toAbsolutePath().toString();
-        name = inputPath.getFileName().toString();
-        lastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(basicFileAttributes.lastModifiedTime().toMillis()), ZoneId.systemDefault());
-        created = LocalDateTime.ofInstant(Instant.ofEpochMilli(basicFileAttributes.creationTime().toMillis()), ZoneId.systemDefault());
-
+    public FileInfoLucene(FileInfo fi) {
+        indexname = fi.getIndexName();
+        type = fi.isDirectory() ? FileType.DIRECTORY : FileType.FILE;
+        uuid = String.valueOf(fi.getId());
+        ext = fi.getExt();
+        size = fi.getSize();
+        path = fi.getPath();
+        name = fi.getName();
+        lastModified = fi.getLastModified();
+        created = LocalDateTime.now();
     }
 
     public String getUuid() {
