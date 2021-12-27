@@ -160,7 +160,7 @@ public class IndexRead {
 
     private void addSingleFilters(BooleanQuery.Builder query, HashMap<String, String> queryFilters) {
 
-        String supportedFields[] = {"index", "ext", "name", "content", "path"};
+        String supportedFields[] = {"indexname", "ext", "name", "content", "path"};
         List<String> supportedFilters = Arrays.asList(supportedFields);
 
         for (String k : supportedFilters) {
