@@ -5,6 +5,7 @@ import com.ogefest.filehunter.index.StatusType;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DirectoryIndex {
     private String name;
@@ -12,12 +13,12 @@ public class DirectoryIndex {
     private ArrayList<String> ignorePhrase = new ArrayList<>();
     private ArrayList<String> ignoreExtension = new ArrayList<>();
     private int intervalUpdateStructure = 3600;
-    private ReindexType reindexType = ReindexType.RECURRENT;
+    private ReindexType reindexType = ReindexType.RECURRING;
     private boolean extractMetadata = false;
     private String lastStructureIndexed;
     private String lastMetadataIndexed;
     private String type;
-    private String configuration;
+    private HashMap<String, String> configuration = new HashMap<>();
     private StatusType status = StatusType.UNKNOWN;
 
     public DirectoryIndex() {
@@ -32,11 +33,11 @@ public class DirectoryIndex {
         this.type = type;
     }
 
-    public String getConfiguration() {
+    public HashMap<String, String> getConfiguration() {
         return configuration;
     }
 
-    public void setConfiguration(String configuration) {
+    public void setConfiguration(HashMap<String, String> configuration) {
         this.configuration = configuration;
     }
 

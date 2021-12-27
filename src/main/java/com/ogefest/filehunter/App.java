@@ -82,7 +82,7 @@ public class App {
 
         DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
         for (DirectoryIndex d : storage.getDirectories()) {
-            if (d.getReindexType() != ReindexType.RECURRENT) {
+            if (d.getReindexType() != ReindexType.RECURRING) {
                 return;
             }
             if (indexStatus.get(d.getName()) != StatusType.ONLINE) {

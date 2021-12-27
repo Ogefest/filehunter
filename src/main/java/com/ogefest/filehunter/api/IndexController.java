@@ -50,7 +50,7 @@ public class IndexController {
         if (newDirectoryIndex.getName().equals("")) {
             throw new BadRequestException("Name parameter is required");
         }
-        if (newDirectoryIndex.getConfiguration().length() == 0) {
+        if (newDirectoryIndex.getConfiguration().size() == 0) {
             throw new BadRequestException("Configuration parameter is required ");
         }
         if (newDirectoryIndex.getType().length() == 0) {
@@ -74,7 +74,7 @@ public class IndexController {
         }
 
         result.setStatus(app.getIndexStatus().get(name));
-        result.setConfiguration("");
+//        result.setConfiguration("");
 
         return result;
     }
@@ -103,7 +103,7 @@ public class IndexController {
 
         for (DirectoryIndex d : dirList) {
             d.setStatus(app.getIndexStatus().get(d.getName()));
-            d.setConfiguration("");
+//            d.setConfiguration("");
         }
 
         return dirList;

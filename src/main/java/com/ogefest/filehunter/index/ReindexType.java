@@ -1,6 +1,6 @@
 package com.ogefest.filehunter.index;
 
 public enum ReindexType {
-    RECURRENT,
+    RECURRING,
     ON_DEMAND
 }
