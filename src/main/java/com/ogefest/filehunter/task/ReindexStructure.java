@@ -75,7 +75,9 @@ public class ReindexStructure extends Task {
                 addToDatabase(obj);
 
                 if (obj.getEngineItem().isDirectory()) {
-                    walk(obj);
+                    if (!obj.getEngineItem().getPath().equals(item.getEngineItem().getPath())) {
+                        walk(obj);
+                    }
                 }
             }
         }
