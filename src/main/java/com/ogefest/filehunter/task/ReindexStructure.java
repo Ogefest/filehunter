@@ -41,6 +41,19 @@ public class ReindexStructure extends Task {
         db.openReindexingSession(reindexTimestamp, index);
 
         try {
+            ArrayList<FileObject> isRootEmpty = ucfs.list(rootPath);
+            if (isRootEmpty.size() == 0) {
+                return;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        } catch (ResourceAccessException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try {
             walk(rootPath);
         } catch (IOException e) {
             e.printStackTrace();

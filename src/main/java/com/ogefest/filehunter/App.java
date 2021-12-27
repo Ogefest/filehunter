@@ -1,9 +1,6 @@
 package com.ogefest.filehunter;
 
-import com.ogefest.filehunter.index.DirectoryIndex;
-import com.ogefest.filehunter.index.DirectoryIndexStorage;
-import com.ogefest.filehunter.index.Status;
-import com.ogefest.filehunter.index.StatusType;
+import com.ogefest.filehunter.index.*;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.filehunter.task.ReindexFullText;
@@ -85,6 +82,13 @@ public class App {
 
         DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
         for (DirectoryIndex d : storage.getDirectories()) {
+            if (d.getReindexType() != ReindexType.RECURRENT) {
+                return;
+            }
+            if (indexStatus.get(d.getName()) != StatusType.ONLINE) {
+                return;
+            }
+
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
                 addTask(new ReindexStructure(d));
                 addTask(new ReindexFullText());

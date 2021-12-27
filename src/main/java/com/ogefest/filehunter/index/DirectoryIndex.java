@@ -12,6 +12,7 @@ public class DirectoryIndex {
     private ArrayList<String> ignorePhrase = new ArrayList<>();
     private ArrayList<String> ignoreExtension = new ArrayList<>();
     private int intervalUpdateStructure = 3600;
+    private ReindexType reindexType = ReindexType.RECURRENT;
     private boolean extractMetadata = false;
     private String lastStructureIndexed;
     private String lastMetadataIndexed;
@@ -117,5 +118,13 @@ public class DirectoryIndex {
 
     public void setStatus(StatusType status) {
         this.status = status;
+    }
+
+    public ReindexType getReindexType() {
+        return reindexType;
+    }
+
+    public void setReindexType(ReindexType reindexType) {
+        this.reindexType = reindexType;
     }
 }
