@@ -1,6 +1,7 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.search.IndexWrite;
 import com.ogefest.filehunter.storage.FTSStatus;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
@@ -8,12 +9,10 @@ import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
 import com.ogefest.unifiedcloudfilesystem.FileObject;
 import com.ogefest.unifiedcloudfilesystem.ResourceAccessException;
 import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
-import com.ogefest.unifiedcloudfilesystem.engine.FileSystem;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ReindexStructure extends Task {
 

@@ -1,4 +1,6 @@
-package com.ogefest.filehunter;
+package com.ogefest.filehunter.index;
+
+import com.ogefest.filehunter.index.StatusType;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +17,7 @@ public class DirectoryIndex {
     private String lastMetadataIndexed;
     private String type;
     private String configuration;
+    private StatusType status = StatusType.UNKNOWN;
 
     public DirectoryIndex() {
 
@@ -108,4 +111,11 @@ public class DirectoryIndex {
         this.lastMetadataIndexed = lastMetadataIndexed.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
+    public StatusType getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusType status) {
+        this.status = status;
+    }
 }

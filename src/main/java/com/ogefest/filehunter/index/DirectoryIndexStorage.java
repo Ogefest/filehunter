@@ -1,7 +1,8 @@
-package com.ogefest.filehunter;
+package com.ogefest.filehunter.index;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ogefest.filehunter.Configuration;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,18 +1,16 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.*;
-import com.ogefest.filehunter.search.IndexRead;
-import com.ogefest.filehunter.search.SearchResult;
+import com.ogefest.filehunter.index.DirectoryIndex;
+import com.ogefest.filehunter.index.DirectoryIndexStorage;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
 import com.ogefest.unifiedcloudfilesystem.FileObject;
 import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
-import io.smallrye.mutiny.Uni;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.io.IOException;
 
 @Path("/download")

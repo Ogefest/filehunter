@@ -1,15 +1,23 @@
 package com.ogefest.filehunter;
 
+import com.ogefest.filehunter.index.DirectoryIndex;
+import com.ogefest.filehunter.index.DirectoryIndexStorage;
+import com.ogefest.filehunter.index.Status;
+import com.ogefest.filehunter.index.StatusType;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
-import com.ogefest.filehunter.storage.SqliteFSD;
 import com.ogefest.filehunter.task.ReindexFullText;
 import com.ogefest.filehunter.task.ReindexStructure;
 import com.ogefest.filehunter.task.Task;
 import com.ogefest.filehunter.task.Worker;
+import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
+import com.ogefest.unifiedcloudfilesystem.FileObject;
+import com.ogefest.unifiedcloudfilesystem.ResourceAccessException;
+import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
 import io.quarkus.scheduler.Scheduled;
 
 import javax.inject.Singleton;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -21,10 +29,12 @@ public class App {
     private Configuration conf;
     private Worker taskWorker;
     private FileSystemDatabase dbStorage;
+    private Status indexStatus;
 
     public App() {
         conf = new Configuration();
         taskWorker = new Worker(conf);
+        indexStatus = new Status();
     }
 
     public Configuration getConfiguration() {
@@ -33,6 +43,35 @@ public class App {
 
     public void addTask(Task t) {
         tasks.add(t);
+    }
+
+
+    @Scheduled(every = "60s")
+    protected void checkIfIndexIsAvailable() {
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(conf);
+        for (DirectoryIndex d : storage.getDirectories()) {
+            EngineConfiguration ec = new EngineConfiguration(d.getConfiguration());
+
+            UnifiedCloudFileSystem ucfs = new UnifiedCloudFileSystem();
+            ucfs.registerEngine(d.getName(), BackendEngineFactory.get(d.getType(), ec));
+            FileObject rootPath = ucfs.getByPath(d.getName(), "/");
+
+            try {
+                ArrayList<FileObject> itemList = ucfs.list(rootPath);
+                if (itemList.size() > 0) {
+                    indexStatus.set(d.getName(), StatusType.ONLINE);
+                } else {
+                    indexStatus.set(d.getName(), StatusType.OFFLINE);
+                }
+
+            } catch (IOException e) {
+                indexStatus.set(d.getName(), StatusType.ERROR);
+                e.printStackTrace();
+            } catch (ResourceAccessException e) {
+                indexStatus.set(d.getName(), StatusType.ERROR);
+                e.printStackTrace();
+            }
+        }
     }
 
     @Scheduled(every = "10s")
@@ -81,6 +120,10 @@ public class App {
 
     public Task getCurrentTaskProcessing() {
         return taskWorker.getCurrentTask();
+    }
+
+    public Status getIndexStatus() {
+        return indexStatus;
     }
 
 }

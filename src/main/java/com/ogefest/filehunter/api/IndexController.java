@@ -1,15 +1,15 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
-import com.ogefest.filehunter.DirectoryIndex;
-import com.ogefest.filehunter.DirectoryIndexStorage;
+import com.ogefest.filehunter.index.DirectoryIndex;
+import com.ogefest.filehunter.index.DirectoryIndexStorage;
 import com.ogefest.filehunter.task.ReindexStructure;
 import com.ogefest.filehunter.task.RemoveIndex;
 
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.io.File;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +23,7 @@ public class IndexController {
     @Path("/list")
     @Produces(MediaType.APPLICATION_JSON)
     public List<DirectoryIndex> hello() {
-        DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
-        return storage.getDirectories();
+        return getCurrentIndexList();
     }
 
     @POST
@@ -37,6 +36,10 @@ public class IndexController {
 
         DirectoryIndex d = storage.getByName(name);
         app.addTask(new ReindexStructure(d));
+
+        d.setLastStructureIndexed(LocalDateTime.now());
+        storage.setDirectory(d);
+
     }
 
     @POST
@@ -57,7 +60,7 @@ public class IndexController {
         DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
         storage.setDirectory(newDirectoryIndex);
 
-        return storage.getDirectories();
+        return getCurrentIndexList();
     }
 
     @GET
@@ -69,6 +72,9 @@ public class IndexController {
         if (result == null) {
             throw new NotFoundException();
         }
+
+        result.setStatus(app.getIndexStatus().get(name));
+        result.setConfiguration("");
 
         return result;
     }
@@ -87,7 +93,20 @@ public class IndexController {
         storage.removeByName(name);
         app.addTask(new RemoveIndex(name));
 
-        return storage.getDirectories();
+        return getCurrentIndexList();
+    }
+
+    private List<DirectoryIndex> getCurrentIndexList() {
+        DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
+
+        ArrayList<DirectoryIndex> dirList = storage.getDirectories();
+
+        for (DirectoryIndex d : dirList) {
+            d.setStatus(app.getIndexStatus().get(d.getName()));
+            d.setConfiguration("");
+        }
+
+        return dirList;
     }
 
 }

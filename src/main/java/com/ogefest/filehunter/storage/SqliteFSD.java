@@ -1,6 +1,7 @@
 package com.ogefest.filehunter.storage;
 
 import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.index.DirectoryIndex;
 
 import java.io.File;
 import java.sql.*;

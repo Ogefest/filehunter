@@ -1,6 +1,6 @@
 package com.ogefest.filehunter.storage;
 
-import com.ogefest.filehunter.DirectoryIndex;
+import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.FileAttributes;
 import com.ogefest.filehunter.FileInfo;
 
