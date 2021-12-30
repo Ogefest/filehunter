@@ -68,6 +68,11 @@ public class App {
                 indexStatus.set(d.getName(), StatusType.ERROR);
                 e.printStackTrace();
             }
+            try {
+                ucfs.unregisterEngine(d.getName());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

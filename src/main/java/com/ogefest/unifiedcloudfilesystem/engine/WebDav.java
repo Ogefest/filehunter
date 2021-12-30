@@ -8,7 +8,10 @@ import com.ogefest.unifiedcloudfilesystem.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -37,7 +40,13 @@ public class WebDav extends Engine {
     }
 
     private String getFullUrl(EngineItem item) {
-        return url + item.getPath();
+        try {
+            String result =  url + URLEncoder.encode(item.getPath(), StandardCharsets.UTF_8.toString());
+            result = url + item.getPath().replace(" ", "%20");
+            return result;
+        } catch (UnsupportedEncodingException e) {
+            return null;
+        }
     }
 
     @Override

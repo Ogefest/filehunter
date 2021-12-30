@@ -26,7 +26,7 @@ public class Worker {
             return;
         }
 
-        Thread t = new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
 
@@ -53,10 +53,7 @@ public class Worker {
                     LOG.info("Task " + t.getClass().getName() + " finished");
                     currentTask = null;
 
-
                 }
-
-
 
                 isBusy = false;
 
@@ -64,8 +61,8 @@ public class Worker {
         });
         isBusy = true;
 
-        t.setName("Task queue worker");
-        t.start();
+        thread.setName("Task queue worker");
+        thread.start();
     }
 
     public Task getCurrentTask() {
@@ -73,6 +70,10 @@ public class Worker {
     }
 
     public boolean isBusy() {
+        if (thread == null || thread.isInterrupted()) {
+            isBusy = false;
+        }
+
         return isBusy;
     }
 

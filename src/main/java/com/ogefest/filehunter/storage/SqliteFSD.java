@@ -2,14 +2,17 @@ package com.ogefest.filehunter.storage;
 
 import com.ogefest.filehunter.*;
 import com.ogefest.filehunter.index.DirectoryIndex;
+import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.zip.CRC32;
 
 public class SqliteFSD implements FileSystemDatabase {
 
@@ -162,20 +165,57 @@ public class SqliteFSD implements FileSystemDatabase {
     }
 
     @Override
+    public FileInfo get(String uid) {
+        String[] params = uid.split("-");
+        if (params.length != 2) {
+            return null;
+        }
+
+        FileInfo fi = getById(Integer.parseInt(params[0]));
+        long inputHash = Long.parseLong(params[1]);
+        if (inputHash != fi.getHash()) {
+            return null;
+        }
+
+        return fi;
+    }
+
+
+    @Override
     public ArrayList<FileInfo> list(String path, DirectoryIndex index) {
         int id = getIdByPath(path, index);
 
-        ArrayList<FileInfo> result = new ArrayList<>();
-
         if (id == 0 && !path.equals("/")) {
-            return result;
+            return new ArrayList<>();
         }
+
+        return listById(id, index.getName());
+    }
+
+    @Override
+    public ArrayList<FileInfo> list(String uid) {
+
+        String[] params = uid.split("-");
+        if (params.length != 2) {
+            return new ArrayList<>();
+        }
+
+        FileInfo item = getById(Integer.parseInt(params[0]));
+        if (item == null) {
+            return new ArrayList<>();
+        }
+
+        return listById(item.getId(), item.getIndexName());
+    }
+
+    private ArrayList<FileInfo> listById(int id, String index) {
+        ArrayList<FileInfo> result = new ArrayList<>();
 
         String sql = "SELECT id FROM filesystem WHERE parent_id = ? AND storage = ?";
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, id);
-            pstmt.setString(2, index.getName());
+            pstmt.setString(2, index);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 result.add(getById(rs.getInt("id")));

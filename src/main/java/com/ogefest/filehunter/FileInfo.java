@@ -1,6 +1,8 @@
 package com.ogefest.filehunter;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.zip.CRC32;
 
 public class FileInfo {
 
@@ -9,12 +11,18 @@ public class FileInfo {
     private FileAttributes fileAttributes;
     private int id;
     private int parentId;
+    private long hash;
 
     public FileInfo(int id, int parentId, String path, String index, FileAttributes fileAttributes) {
         this.id = id;
         this.parentId = parentId;
         this.path = path;
         this.index = index;
+
+        CRC32 hash = new CRC32();
+        hash.update(path.getBytes(StandardCharsets.UTF_8));
+
+        this.hash = hash.getValue();
         this.fileAttributes = fileAttributes;
     }
 
@@ -72,5 +80,7 @@ public class FileInfo {
         return fileAttributes.getSize();
     }
 
-
+    public long getHash() {
+        return hash;
+    }
 }

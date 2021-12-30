@@ -1,9 +1,12 @@
 package com.ogefest.filehunter;
 
+import java.nio.charset.StandardCharsets;
 import java.time.format.DateTimeFormatter;
+import java.util.zip.CRC32;
 
 public class FileItem {
 
+    private String uid;
     private String name;
     private String path;
     private String index;
@@ -20,6 +23,7 @@ public class FileItem {
         ext = fi.getExt();
         size = fi.getSize();
         lastModified = fi.getLastModified().format(DateTimeFormatter.ISO_DATE_TIME);
+        uid = fi.getId() + "-" + fi.getHash();
 
         type = "f";
         if (fi.isDirectory()) {
@@ -38,6 +42,9 @@ public class FileItem {
         if (finfo.getType() == FileType.DIRECTORY) {
             type = "d";
         }
+
+        CRC32 hash = new CRC32();
+        hash.update(path.getBytes(StandardCharsets.UTF_8));
     }
 
     public String getLastModified() {
@@ -94,5 +101,13 @@ public class FileItem {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }
