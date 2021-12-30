@@ -20,7 +20,6 @@ public class S3 extends Engine {
     public S3(EngineConfiguration c) {
         super(c);
 
-
         try {
             bucketName = c.getStringValue("bucket");
 
@@ -41,7 +40,7 @@ public class S3 extends Engine {
         try {
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(bucketName)
-                    .object(engineItem.getPath())
+                    .object(getPath(engineItem))
                     .stream(input, input.available(), -1)
                     .build());
 
@@ -74,7 +73,7 @@ public class S3 extends Engine {
     public InputStream get(EngineItem engineItem) {
 
         try {
-            return minioClient.getObject(GetObjectArgs.builder().bucket(bucketName).object(engineItem.getPath()).build());
+            return minioClient.getObject(GetObjectArgs.builder().bucket(bucketName).object(getPath(engineItem)).build());
         } catch (ErrorResponseException e) {
             e.printStackTrace();
         } catch (InsufficientDataException e) {
@@ -106,7 +105,7 @@ public class S3 extends Engine {
                 ListObjectsArgs
                         .builder()
                         .bucket(bucketName)
-                        .prefix(engineItem.getPath())
+                        .prefix(getPath(engineItem))
                         .recursive(false)
                         .build()
         );
@@ -120,7 +119,10 @@ public class S3 extends Engine {
                 attribute.isFile = !item.isDir();
                 attribute.isDirectory = item.isDir();
                 attribute.size = item.size();
-                attribute.lastModified = item.lastModified().toLocalDateTime();
+                attribute.lastModified = null;
+                if (item.lastModified() != null) {
+                    attribute.lastModified = item.lastModified().toLocalDateTime();
+                }
 
                 EngineItem ei = new EngineItem(item.objectName(), attribute);
                 result.add(ei);
@@ -146,20 +148,17 @@ public class S3 extends Engine {
 
         }
 
-
         return result;
     }
 
     @Override
     public boolean exists(EngineItem engineItem) {
 
-//        try {
-
         Iterable<Result<Item>> bucketList = minioClient.listObjects(
                 ListObjectsArgs
                         .builder()
                         .bucket(bucketName)
-                        .prefix(engineItem.getPath())
+                        .prefix(getPath(engineItem))
                         .recursive(false)
                         .maxKeys(1)
                         .build()
@@ -168,7 +167,6 @@ public class S3 extends Engine {
         for (Result<Item> it : bucketList) {
             return true;
         }
-
 
         return false;
     }
@@ -181,7 +179,7 @@ public class S3 extends Engine {
                     ListObjectsArgs
                             .builder()
                             .bucket(bucketName)
-                            .prefix(engineItem.getPath())
+                            .prefix(getPath(engineItem))
                             .recursive(true)
                             .build()
             );
@@ -233,11 +231,15 @@ public class S3 extends Engine {
         EngineItemAttribute eia = new EngineItemAttribute();
         eia.isDirectory = true;
 
-        EngineItem it = new EngineItem(item.getPath() + "/.dirFile", eia);
+        EngineItem it = new EngineItem(getPath(item) + "/.dirFile", eia);
 
         String msg = "dummy file for mkdir";
         InputStream input = new ByteArrayInputStream(msg.getBytes());
         set(it, input);
+    }
+
+    private String getPath(EngineItem item) {
+        return item.getPath().substring(1);
     }
 
 
