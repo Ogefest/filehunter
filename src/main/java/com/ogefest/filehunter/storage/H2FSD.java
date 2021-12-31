@@ -14,48 +14,50 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.zip.CRC32;
 
-public class SqliteFSD implements FileSystemDatabase {
+public class H2FSD implements FileSystemDatabase {
 
     protected Configuration conf;
     protected Connection conn;
     protected String dbFilePath = null;
-    protected boolean isInMemory = true;
+//    protected boolean isInMemory = true;
 
-    public SqliteFSD(Configuration conf) {
+    public H2FSD(Configuration conf) {
         this.conf = conf;
 
         dbFilePath = conf.getValue("storage.directory") + "/filesystem.db";
 
         String connectionUrl = conf.getValue("DB_URL");
         if (connectionUrl == null || connectionUrl.equals("")) {
-            if (isInMemory) {
-                connectionUrl = "jdbc:sqlite::memory:";
-            } else {
-                connectionUrl = "jdbc:sqlite:" + dbFilePath;
-            }
+//            if (isInMemory) {
+//                connectionUrl = "jdbc:sqlite::memory:";
+//            } else {
+//                connectionUrl = "jdbc:sqlite:" + dbFilePath;
+//            }
+//            connectionUrl = "jdbc:h2:" + dbFilePath;
+            connectionUrl = "jdbc:h2:mem";
         }
 
         try {
-            Class.forName("org.sqlite.JDBC");
+//            Class.forName("org.sqlite.JDBC");
             conn = DriverManager.getConnection(connectionUrl);
             File f = new File(dbFilePath);
             f = new File(dbFilePath);
-            if (isInMemory && f.exists()) {
-                conn.createStatement().executeUpdate("restore from " + dbFilePath);
-            }
+//            if (isInMemory && f.exists()) {
+//                conn.createStatement().executeUpdate("restore from " + dbFilePath);
+//            }
 
             String sql = "CREATE TABLE IF NOT EXISTS filesystem (\n" +
-                    "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
+                    "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\n" +
                     "parent_id INTEGER NOT NULL,\n" +
-                    "fname TEXT NOT NULL,\n" +
-                    "fpath TEXT,\n" +
-                    "storage TEXT NOT NULL,\n" +
+                    "fname VARCHAR(500) NOT NULL,\n" +
+                    "fpath VARCHAR(500),\n" +
+                    "storage VARCHAR(500) NOT NULL,\n" +
                     "fsize INTEGER,\n" +
-                    "ftype TEXT,\n" +
+                    "ftype VARCHAR(1),\n" +
                     "flast_modified INTEGER,\n" +
                     "fts_status INTEGER DEFAULT 0,\n" +
                     "is_visible INTEGER DEFAULT 1,\n" +
-                    "fattributes TEXT,\n" +
+                    "fattributes VARCHAR(500),\n" +
                     "reindex_counter INTEGER DEFAULT 0\n" +
 //                    "CONSTRAINT filesystem_PK PRIMARY KEY (id)\n" +
                     ")";
@@ -79,9 +81,9 @@ public class SqliteFSD implements FileSystemDatabase {
             stmt.execute(indexSql4);
 
             String sql2 = "CREATE TABLE IF NOT EXISTS reindexsync (\n" +
-                    "id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\n" +
+                    "id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT,\n" +
                     "ident INTEGER NOT NULL,\n" +
-                    "indexname TEXT NOT NULL,\n" +
+                    "indexname VARCHAR(100) NOT NULL,\n" +
                     "is_finished INTEGER DEFAULT 0,\n" +
                     "added INTEGER NOT NULL\n" +
                     ")";
@@ -96,8 +98,8 @@ public class SqliteFSD implements FileSystemDatabase {
 
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
         }
     }
 
@@ -111,7 +113,7 @@ public class SqliteFSD implements FileSystemDatabase {
 
         String pathName = pathElems[pathElems.length - 1];
         try {
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            PreparedStatement pstmt = conn.prepareStatement(sql, new String[] { "id" });
 
             pstmt.setString(1, pathName);
             pstmt.setString(2, index.getName());
@@ -123,7 +125,10 @@ public class SqliteFSD implements FileSystemDatabase {
 
             pstmt.executeUpdate();
 
-            int insertedId = pstmt.getGeneratedKeys().getInt(1);
+            ResultSet keys = pstmt.getGeneratedKeys();
+            keys.next();
+            int insertedId = keys.getInt(1);
+
             return getById(insertedId);
 
         } catch (SQLException e) {
@@ -399,9 +404,9 @@ public class SqliteFSD implements FileSystemDatabase {
     @Override
     public void closeConnection() {
         try {
-            if (isInMemory) {
-                conn.createStatement().executeUpdate("backup to " + dbFilePath);
-            }
+//            if (isInMemory) {
+//                conn.createStatement().executeUpdate("backup to " + dbFilePath);
+//            }
             conn.close();
 
         } catch (SQLException e) {

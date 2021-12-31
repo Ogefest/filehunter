@@ -4,7 +4,7 @@ import com.ogefest.filehunter.Configuration;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.IndexWrite;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
-import com.ogefest.filehunter.storage.SqliteFSD;
+import com.ogefest.filehunter.storage.H2FSD;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -37,8 +37,7 @@ public class Worker {
 
                     IndexRead indexRead = new IndexRead(conf);
                     IndexWrite indexWrite = new IndexWrite(conf);
-                    FileSystemDatabase db = new SqliteFSD(conf);
-
+                    FileSystemDatabase db = new H2FSD(conf);
 
                     currentTask.setConfiguration(conf);
                     currentTask.setIndexes(indexWrite, indexRead);

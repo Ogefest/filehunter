@@ -4,11 +4,11 @@ import com.ogefest.filehunter.Configuration;
 
 import java.sql.SQLException;
 
-public class SqliteFSDReadOnly extends SqliteFSD {
+public class H2FSDReadOnly extends H2FSD {
 
     protected boolean isInMemory = false;
 
-    public SqliteFSDReadOnly(Configuration conf) {
+    public H2FSDReadOnly(Configuration conf) {
         super(conf);
     }
 

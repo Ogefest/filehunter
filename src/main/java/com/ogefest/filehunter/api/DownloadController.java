@@ -4,7 +4,7 @@ import com.ogefest.filehunter.*;
 import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.index.DirectoryIndexStorage;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
-import com.ogefest.filehunter.storage.SqliteFSDReadOnly;
+import com.ogefest.filehunter.storage.H2FSDReadOnly;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
 import com.ogefest.unifiedcloudfilesystem.FileObject;
 import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
@@ -25,7 +25,7 @@ public class DownloadController {
     @Path("/uid")
     public Response getByUid(@QueryParam("uid") String uid ) {
 
-        FileSystemDatabase db = new SqliteFSDReadOnly(app.getConfiguration());
+        FileSystemDatabase db = new H2FSDReadOnly(app.getConfiguration());
         FileInfo fi = db.get(uid);
         if (fi == null) {
             Response.ResponseBuilder response = Response.status(404, "Not found");

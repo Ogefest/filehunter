@@ -29,6 +29,7 @@ public class App {
     private Status indexStatus;
 
     public App() {
+
         conf = new Configuration();
         taskWorker = new Worker(conf);
         indexStatus = new Status();

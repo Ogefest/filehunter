@@ -5,7 +5,7 @@ import com.ogefest.filehunter.index.DirectoryIndexStorage;
 import com.ogefest.filehunter.FileInfo;
 import com.ogefest.filehunter.FileItem;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
-import com.ogefest.filehunter.storage.SqliteFSDReadOnly;
+import com.ogefest.filehunter.storage.H2FSDReadOnly;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -22,7 +22,7 @@ public class BrowseController {
     @GET
     public ArrayList<FileItem> search(@QueryParam("path") String query, @QueryParam("index") String indexname) {
 
-        FileSystemDatabase db = new SqliteFSDReadOnly(app.getConfiguration());
+        FileSystemDatabase db = new H2FSDReadOnly(app.getConfiguration());
         DirectoryIndexStorage storage = new DirectoryIndexStorage(app.getConfiguration());
 
         ArrayList<FileItem> result = new ArrayList<>();
