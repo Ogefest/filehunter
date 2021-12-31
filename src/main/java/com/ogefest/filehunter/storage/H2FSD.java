@@ -1,18 +1,18 @@
 package com.ogefest.filehunter.storage;
 
-import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.Configuration;
+import com.ogefest.filehunter.FileAttributes;
+import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.FileType;
 import com.ogefest.filehunter.index.DirectoryIndex;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.zip.CRC32;
 
 public class H2FSD implements FileSystemDatabase {
 

@@ -1,9 +1,9 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
-import com.ogefest.filehunter.index.DirectoryIndexStorage;
 import com.ogefest.filehunter.FileInfo;
 import com.ogefest.filehunter.FileItem;
+import com.ogefest.filehunter.index.DirectoryIndexStorage;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import com.ogefest.filehunter.storage.H2FSDReadOnly;
 

@@ -2,14 +2,9 @@ package com.ogefest.filehunter;
 
 import org.apache.lucene.document.Document;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Optional;
-import java.util.UUID;
 
 public class FileInfoLucene {
 

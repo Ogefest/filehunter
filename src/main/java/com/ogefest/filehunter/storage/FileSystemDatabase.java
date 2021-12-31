@@ -1,8 +1,8 @@
 package com.ogefest.filehunter.storage;
 
-import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.FileAttributes;
 import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.index.DirectoryIndex;
 
 import java.util.ArrayList;
 

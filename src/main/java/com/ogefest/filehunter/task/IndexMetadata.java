@@ -1,8 +1,8 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.FileInfoLucene;
 import com.ogefest.filehunter.FileType;
+import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.search.IndexWrite;
 import io.quarkus.tika.TikaParseException;

@@ -1,6 +1,9 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.*;
+import com.ogefest.filehunter.BackendEngineFactory;
+import com.ogefest.filehunter.FileAttributes;
+import com.ogefest.filehunter.FileInfo;
+import com.ogefest.filehunter.FileType;
 import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.search.IndexWrite;
 import com.ogefest.filehunter.storage.FTSStatus;
