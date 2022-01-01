@@ -41,7 +41,7 @@ public class WebDav extends Engine {
 
     private String getFullUrl(EngineItem item) {
         try {
-            String result =  url + URLEncoder.encode(item.getPath(), StandardCharsets.UTF_8.toString());
+            String result = url + URLEncoder.encode(item.getPath(), StandardCharsets.UTF_8.toString());
             result = url + item.getPath().replace(" ", "%20");
             return result;
         } catch (UnsupportedEncodingException e) {

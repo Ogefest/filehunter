@@ -6,8 +6,8 @@ import com.ogefest.filehunter.FileInfo;
 import com.ogefest.filehunter.MimeUtils;
 import com.ogefest.filehunter.index.DirectoryIndex;
 import com.ogefest.filehunter.index.DirectoryIndexStorage;
+import com.ogefest.filehunter.storage.Factory;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
-import com.ogefest.filehunter.storage.H2FSDReadOnly;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
 import com.ogefest.unifiedcloudfilesystem.FileObject;
 import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
@@ -28,9 +28,9 @@ public class DownloadController {
 
     @GET
     @Path("/uid")
-    public Response getByUid(@QueryParam("uid") String uid ) {
+    public Response getByUid(@QueryParam("uid") String uid) {
 
-        FileSystemDatabase db = new H2FSDReadOnly(app.getConfiguration());
+        FileSystemDatabase db = Factory.get(app.getConfiguration());
         FileInfo fi = db.get(uid);
         if (fi == null) {
             Response.ResponseBuilder response = Response.status(404, "Not found");
@@ -82,7 +82,7 @@ public class DownloadController {
 
     @GET
     @Path("/file")
-    public Response get(@QueryParam("path") String path, @QueryParam("index") String indexName ) {
+    public Response get(@QueryParam("path") String path, @QueryParam("index") String indexName) {
 
         DirectoryIndexStorage indexStorage = new DirectoryIndexStorage(app.getConfiguration());
         DirectoryIndex index = indexStorage.getByName(indexName);

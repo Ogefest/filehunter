@@ -18,7 +18,6 @@ public class EngineItem {
     }
 
 
-
     public EngineItem(String path, EngineItemAttribute attributes) {
         this.path = pathCleanup(path);
         updateName();
@@ -91,7 +90,7 @@ public class EngineItem {
 
         String[] extElems = name.split("\\.");
         if (extElems.length >= 2) {
-            ext = extElems[extElems.length-1];
+            ext = extElems[extElems.length - 1];
         }
 
     }

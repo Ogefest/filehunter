@@ -12,9 +12,11 @@ public interface FileSystemDatabase {
     FileInfo add(String path, FileAttributes attributes, DirectoryIndex index);
 
     FileInfo get(String path, DirectoryIndex index);
+
     FileInfo get(String uid);
 
     ArrayList<FileInfo> list(String path, DirectoryIndex index);
+
     ArrayList<FileInfo> list(String uid);
 
     boolean exists(FileInfo fi);

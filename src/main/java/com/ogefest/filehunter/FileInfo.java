@@ -1,19 +1,22 @@
 package com.ogefest.filehunter;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.zip.CRC32;
 
+@RegisterForReflection
 public class FileInfo {
 
     private String path;
     private String index;
     private FileAttributes fileAttributes;
-    private int id;
-    private int parentId;
+    private String id;
+    private String parentId;
     private long hash;
 
-    public FileInfo(int id, int parentId, String path, String index, FileAttributes fileAttributes) {
+    public FileInfo(String id, String parentId, String path, String index, FileAttributes fileAttributes) {
         this.id = id;
         this.parentId = parentId;
         this.path = path;
@@ -44,20 +47,32 @@ public class FileInfo {
         return elems[elems.length - 1];
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public int getParentId() {
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getParentId() {
         return parentId;
     }
 
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
+
     public boolean existsInDatabase() {
-        return id > 0;
+        return id.length() > 0;
     }
 
     public String getPath() {
         return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getIndexName() {
@@ -82,5 +97,25 @@ public class FileInfo {
 
     public long getHash() {
         return hash;
+    }
+
+    public void setHash(long hash) {
+        this.hash = hash;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
+    }
+
+    public FileAttributes getFileAttributes() {
+        return fileAttributes;
+    }
+
+    public void setFileAttributes(FileAttributes fileAttributes) {
+        this.fileAttributes = fileAttributes;
     }
 }

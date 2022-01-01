@@ -9,7 +9,7 @@ import com.ogefest.filehunter.storage.FileSystemDatabase;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class ReindexFullText extends Task{
+public class ReindexFullText extends Task {
 
     private IndexWrite writer;
     private FileSystemDatabase db;
