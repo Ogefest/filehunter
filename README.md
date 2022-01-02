@@ -3,6 +3,16 @@
 Simple, fast, open source file search engine. Designed to be local file search engine for places where multiple documents 
 are stored on multiple hosts with multiple directories.
 
+## Core features
+
+- Blazing fast search through your files
+- Parsing documents and index content for full text search
+- Multiple backends supported, search files available on local filesystem, WebDAV, S3, FTP
+- Nice and fast React based frontend
+- Offline indexes - reindex directory and search for files even on umounted drives
+- Open Source, self-hosted solution, easy to start using single binary
+- API driven architecture - every operation you can perform using REST API
+
 ## Get started
 1. Download the latest version from releases in Github
 2. Create separate directory where you put binary file
@@ -39,12 +49,3 @@ You can set this value `./filehunter -Dvar.name=var.value -Dvar2.name=var2.value
 - Files in my directory changed frequently, when new files will be available to search?
   - It depends on index configuration. Check option `File structure interval` in index configuration
 
-### Roadmap
-- move configuration to separate file
-- more configuration options:
-  - enable/disable UI
-  - enable/disable methods in API 
-- ~~improve search relevance~~ DONE
-- ~~improve advanced search in UI~~ DONE
-- ~~metadata extraction using Apache Tika~~ DONE
-- support for different architectures like Windows ~~or ARM~~ DONE
