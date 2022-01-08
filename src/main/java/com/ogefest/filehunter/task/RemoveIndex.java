@@ -1,7 +1,5 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.search.IndexWrite;
-
 public class RemoveIndex extends Task {
 
     private String name;
@@ -12,8 +10,8 @@ public class RemoveIndex extends Task {
 
     @Override
     public void run() {
-        IndexWrite iw = getIndexWrite();
-        iw.deleteDocumentByDirectoryName(name);
-        iw.closeIndex();
+//        IndexWrite iw = getIndexWrite();
+//        iw.deleteDocumentByDirectoryName(name);
+//        iw.closeIndex();
     }
 }

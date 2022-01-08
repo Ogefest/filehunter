@@ -1,9 +1,9 @@
-package com.ogefest.filehunter.search;
+package com.ogefest.filehunter.storage;
 
 import com.ogefest.filehunter.Configuration;
 import com.ogefest.filehunter.FHAnalyzer;
+import com.ogefest.filehunter.FileInfo;
 import com.ogefest.filehunter.FileInfoLucene;
-import com.ogefest.filehunter.FileItem;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -24,13 +24,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class IndexRead {
+public class LuceneSearch {
 
     private IndexReader reader;
     private IndexSearcher searcher;
     private Configuration conf;
 
-    public IndexRead(Configuration conf) {
+    public LuceneSearch(Configuration conf) {
         this.conf = conf;
         try {
             reader = DirectoryReader.open(FSDirectory.open(Paths.get(conf.getValue("storage.directory"))));
@@ -53,63 +53,50 @@ public class IndexRead {
         }
     }
 
-    public boolean isStorageReady() {
-        return reader != null;
-    }
-
-    public ArrayList<FileInfoLucene> getAllForIndex(String name) {
-
-        /*
-        @TODO refactor this method, it can't return all documents with content
-        in some cases memory will not be enough
-         */
-        ArrayList<FileInfoLucene> result = new ArrayList<>();
+    public ArrayList<FileInfo> queryByRawQuery(String q, int resultCount) {
+        ArrayList<FileInfo> result = new ArrayList<>();
         if (searcher == null) {
             return result;
         }
+//        Analyzer analyzer = new StandardAnalyzer();
 
+        Analyzer analyzer = new FHAnalyzer();//FHAnalyzer.get();
+        QueryParser parser = new QueryParser("ident", analyzer);
+
+//        QueryParser parser = new QueryParser("ident", analyzer);
+//        parser.setDefaultOperator(QueryParser.Operator.AND);
+        Query query = null;
         try {
-//            Query query = new MatchAllDocsQuery();
-//            Analyzer analyzer2 = new StandardAnalyzer();
-            Analyzer analyzer = new FHAnalyzer();//FHAnalyzer.get();
-            QueryParser parser = new QueryParser("path", analyzer);
-//            QueryParser parser = new QueryParser("path", analyzer);
+            query = parser.parse(q);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
-            Query query = parser.parse("indexname:" + name);
-//            Query query = parser.parse("ext:JPG");
-//            Query query = new QueryParser("path", analyzer);
-            TopDocs hits = searcher.search(query, Integer.MAX_VALUE);
+        TopDocs hits = null;
+        try {
+            hits = searcher.search(query, resultCount);
             for (ScoreDoc scoreDoc : hits.scoreDocs) {
                 Document doc = searcher.doc(scoreDoc.doc);
-                result.add(new FileInfoLucene(doc));
+
+                FileInfoLucene finfo = new FileInfoLucene(doc);
+                FileInfo fi = new FileInfo(finfo);
+//                FileItem fi = new FileItem(finfo);
+                result.add(fi);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
             e.printStackTrace();
         }
 
         return result;
     }
 
-    public FileItem getByUuid(String uuid) {
-        ArrayList<FileItem> searchResults = query("id:" + uuid);
-
-        if (searchResults.size() == 0) {
-            return null;
-        }
-
-        return searchResults.get(0);
-    }
-
-
-    public ArrayList<FileItem> query(String q) {
+    public ArrayList<FileInfo> query(String q) {
         return query(q, new HashMap<>());
     }
 
-    public ArrayList<FileItem> query(String q, HashMap<String, String> filters) {
+    public ArrayList<FileInfo> query(String q, HashMap<String, String> filters) {
 
-        ArrayList<FileItem> result = new ArrayList<>();
+        ArrayList<FileInfo> result = new ArrayList<>();
         if (searcher == null) {
             return result;
         }
@@ -146,7 +133,8 @@ public class IndexRead {
                 Document doc = searcher.doc(scoreDoc.doc);
 
                 FileInfoLucene finfo = new FileInfoLucene(doc);
-                FileItem fi = new FileItem(finfo);
+                FileInfo fi = new FileInfo(finfo);
+//                FileItem fi = new FileItem(finfo);
                 result.add(fi);
             }
         } catch (IOException e) {

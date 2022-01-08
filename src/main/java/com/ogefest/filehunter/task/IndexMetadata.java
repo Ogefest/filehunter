@@ -1,10 +1,15 @@
 package com.ogefest.filehunter.task;
 
-import com.ogefest.filehunter.FileInfoLucene;
+import com.ogefest.filehunter.BackendEngineFactory;
+import com.ogefest.filehunter.Configuration;
+import com.ogefest.filehunter.FileInfo;
 import com.ogefest.filehunter.FileType;
 import com.ogefest.filehunter.index.DirectoryIndex;
-import com.ogefest.filehunter.search.IndexRead;
-import com.ogefest.filehunter.search.IndexWrite;
+import com.ogefest.filehunter.storage.FileSystemDatabase;
+import com.ogefest.filehunter.storage.LuceneSearch;
+import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
+import com.ogefest.unifiedcloudfilesystem.FileObject;
+import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
 import io.quarkus.tika.TikaParseException;
 import io.quarkus.tika.TikaParser;
 import org.apache.tika.exception.TikaException;
@@ -12,7 +17,6 @@ import org.apache.tika.parser.AutoDetectParser;
 import org.jboss.logging.Logger;
 import org.xml.sax.SAXException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
@@ -23,91 +27,81 @@ public class IndexMetadata extends Task {
 
     private static final Logger LOG = Logger.getLogger(IndexMetadata.class);
     private DirectoryIndex directoryIndex;
-    private IndexWrite indexStorage;
-    private IndexRead indexRead;
+    private LuceneSearch luceneSearch;
     private ArrayList<String> contentExtensions;
     private TikaParser tikaParser;
+    private FileSystemDatabase db;
+    private Configuration conf;
+    private UnifiedCloudFileSystem ucfs;
 
-    public IndexMetadata(DirectoryIndex directoryIndex) {
+    public IndexMetadata(DirectoryIndex directoryIndex, Configuration conf) {
         this.directoryIndex = directoryIndex;
+        this.conf = conf;
 
         contentExtensions = new ArrayList<>(Arrays.asList("pdf", "doc", "docx", "xls", "xlsx", "odt", "rtf", "txt", "csv"));
-
-//        this.indexRead = indexRead;
-//        this.indexStorage = indexStorage;
     }
 
     @Override
     public void run() {
 
+        this.db = getDatabase();
+
+        EngineConfiguration ec = new EngineConfiguration(directoryIndex.getConfiguration());
+        ucfs = new UnifiedCloudFileSystem();
+        ucfs.registerEngine(directoryIndex.getName(), BackendEngineFactory.get(directoryIndex.getType(), ec));
+
         if (!directoryIndex.isExtractMetadata()) {
             return;
         }
-        indexStorage = getIndexWrite();
-        indexRead = getIndexRead();
+
+        db.openReindexingSession(directoryIndex.getReindexSessionId(), directoryIndex);
 
         tikaParser = new TikaParser(new AutoDetectParser(), true);
 
-//        this.indexStorage = getApp().getIndexForWrite();
-//        this.indexRead = getApp().getIndexForRead();
+        LuceneSearch search = new LuceneSearch(conf);
 
-        if (!indexStorage.isStorageReady() || !indexRead.isStorageReady()) {
-            LOG.debug("Storage not ready");
-            return;
+        String q = "tometareindex:1 AND type:f";
+        ArrayList<FileInfo> docsToReindex = search.queryByRawQuery(q, Integer.MAX_VALUE);
+        for (FileInfo fi : docsToReindex) {
+
+            String content = getContent(fi);
+
+            fi.getFileAttributes().setContent(content);
+            fi.getFileAttributes().setLastMetaIndexed(LocalDateTime.now());
+            db.add(fi);
+
         }
-
-        ArrayList<FileInfoLucene> fileList = indexRead.getAllForIndex(directoryIndex.getName());
-        int counter = 0;
-        for (FileInfoLucene f : fileList) {
-
-            if (!contentExtensions.contains(f.getExt())) {
-                continue;
-            }
-            if (f.getSize() == 0) {
-                continue;
-            }
-
-
-            if (counter > 1000) {
-                break;
-            }
-
-            if (f.getType() == FileType.FILE && f.getLastModified().isAfter(f.getLastMetaIndexed())) {
-                updateMeta(f);
-
-                counter++;
-            }
-        }
-
+        db.closeReindexingSession(directoryIndex.getReindexSessionId(), directoryIndex);
     }
 
-    private void updateMeta(FileInfoLucene fileInfoLucene) {
-        try {
-
-            String content = plainContent(fileInfoLucene.getPath());
-            fileInfoLucene.setContent(content.trim());
-
-        } catch (Exception e) {
-            LOG.warn("Unable to parse " + fileInfoLucene.getPath());
+    private String getContent(FileInfo fi) {
+        if (!contentExtensions.contains(fi.getExt())) {
+            return "";
+        }
+        if (fi.getSize() == 0) {
+            return "";
+        }
+        if (fi.getSize() > 1024 * 1024) {
+            return "";
+        }
+        if (fi.getFileAttributes().getType() != FileType.FILE) {
+            return "";
         }
 
-        fileInfoLucene.setLastMetaIndexed(LocalDateTime.now());
+        FileObject fo = ucfs.getByPath(fi.getIndexName(), fi.getPath());
         try {
-            indexStorage.addDocument(fileInfoLucene);
+            return plainContent(ucfs.read(fo));
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    private String plainContent(String filename) throws IOException, TikaException, SAXException, TikaParseException {
-
-        try {
-            InputStream stream = new FileInputStream(filename);
-            return tikaParser.parse(stream).getText();
-        } catch (Exception e) {
-            LOG.warn("Unable to parse " + filename);
+        } catch (TikaException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
         }
         return "";
+    }
 
+    private String plainContent(InputStream stream) throws IOException, TikaException, SAXException, TikaParseException {
+        return tikaParser.parse(stream).getText();
     }
 }

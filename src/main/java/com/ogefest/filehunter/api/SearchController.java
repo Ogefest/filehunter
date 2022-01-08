@@ -1,8 +1,9 @@
 package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
+import com.ogefest.filehunter.FileInfo;
 import com.ogefest.filehunter.FileItem;
-import com.ogefest.filehunter.search.IndexRead;
+import com.ogefest.filehunter.storage.LuceneSearch;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
@@ -33,8 +34,13 @@ public class SearchController {
             }
         }
 
-        IndexRead ir = new IndexRead(app.getConfiguration());
-        ArrayList<FileItem> result = ir.query(query, filters);
+        LuceneSearch ir = new LuceneSearch(app.getConfiguration());
+        ArrayList<FileInfo> fileList = ir.query(query, filters);
+
+        ArrayList<FileItem> result = new ArrayList<>();
+        for (FileInfo fi : fileList) {
+            result.add(new FileItem(fi));
+        }
 
         return result;
     }

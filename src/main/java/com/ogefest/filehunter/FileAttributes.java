@@ -11,6 +11,8 @@ public class FileAttributes {
     private long size = 0;
     private String type;
     private String lastModified;
+    private String lastMetaIndexed;
+    private String content = "";
 
     public LocalDateTime getLastModified() {
         if (lastModified == null) {
@@ -21,6 +23,17 @@ public class FileAttributes {
 
     public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified.format(DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    public LocalDateTime getLastMetaIndexed() {
+        if (lastMetaIndexed == null) {
+            return LocalDateTime.of(2000, 1, 1, 0, 0);
+        }
+        return LocalDateTime.parse(lastMetaIndexed, DateTimeFormatter.ISO_DATE_TIME);
+    }
+
+    public void setLastMetaIndexed(LocalDateTime lastModified) {
+        this.lastMetaIndexed = lastModified.format(DateTimeFormatter.ISO_DATE_TIME);
     }
 
     public long getSize() {
@@ -40,5 +53,13 @@ public class FileAttributes {
 
     public void setType(FileType type) {
         this.type = type.name();
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 }

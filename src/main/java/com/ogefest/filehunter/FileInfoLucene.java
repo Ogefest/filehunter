@@ -9,6 +9,7 @@ import java.time.ZoneId;
 public class FileInfoLucene {
 
     private String uuid;
+    private String parentUuid;
     private String path;
     private LocalDateTime lastModified = LocalDateTime.of(1970, 1, 1, 0, 0);
     private LocalDateTime created = LocalDateTime.of(1970, 1, 1, 0, 0);
@@ -21,7 +22,8 @@ public class FileInfoLucene {
     private String content = "";
 
     public FileInfoLucene(Document doc) {
-        this.uuid = doc.get("id");
+        this.uuid = doc.get("ident");
+        this.parentUuid = doc.get("parent");
         this.path = doc.get("path");
         this.name = doc.get("name");
         this.type = doc.get("type").equals("d") ? FileType.DIRECTORY : FileType.FILE;
@@ -33,7 +35,7 @@ public class FileInfoLucene {
         this.ext = doc.get("ext");
         this.indexname = doc.get("indexname");
         this.lastModified = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(doc.get("last_modified"))), ZoneId.systemDefault());
-        this.created = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(doc.get("created"))), ZoneId.systemDefault());
+//        this.created = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(doc.get("created"))), ZoneId.systemDefault());
         this.lastMetaIndexed = LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.parseLong(doc.get("metaindexed"))), ZoneId.systemDefault());
         this.content = doc.get("content");
     }
@@ -47,11 +49,28 @@ public class FileInfoLucene {
         path = fi.getPath();
         name = fi.getName();
         lastModified = fi.getLastModified();
-        created = LocalDateTime.now();
+        lastMetaIndexed = fi.getLastMetaIndexed();
+    }
+
+    public FileInfo getFileInfo() {
+
+        FileAttributes fa = new FileAttributes();
+        fa.setLastModified(lastModified);
+        fa.setType(type);
+        fa.setSize(size);
+        fa.setLastModified(lastMetaIndexed);
+
+        FileInfo fi = new FileInfo(uuid, parentUuid, path, indexname, fa);
+
+        return fi;
     }
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getParentUuid() {
+        return parentUuid;
     }
 
     public String getPath() {

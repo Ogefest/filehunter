@@ -12,6 +12,7 @@ public class FileInfo {
     private String path;
     private String index;
     private FileAttributes fileAttributes;
+    private FileMeta fileMeta;
     private String id;
     private String parentId;
     private long hash;
@@ -27,6 +28,21 @@ public class FileInfo {
 
         this.hash = hash.getValue();
         this.fileAttributes = fileAttributes;
+    }
+
+    public FileInfo(FileInfoLucene finfo) {
+        this.id = finfo.getUuid();
+        this.parentId = finfo.getParentUuid();
+        this.path = finfo.getPath();
+        this.index = finfo.getIndexname();
+
+        FileAttributes fa = new FileAttributes();
+        fa.setType(finfo.getType());
+        fa.setSize(finfo.getSize());
+        fa.setLastModified(finfo.getLastModified());
+        fa.setLastMetaIndexed(finfo.getLastMetaIndexed());
+
+        this.fileAttributes = fa;
     }
 
     public String getName() {
@@ -89,6 +105,10 @@ public class FileInfo {
 
     public LocalDateTime getLastModified() {
         return fileAttributes.getLastModified();
+    }
+
+    public LocalDateTime getLastMetaIndexed() {
+        return fileAttributes.getLastMetaIndexed();
     }
 
     public long getSize() {

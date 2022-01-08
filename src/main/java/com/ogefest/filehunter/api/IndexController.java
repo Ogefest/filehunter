@@ -35,7 +35,7 @@ public class IndexController {
         ArrayList<DirectoryIndex> dirs = storage.getDirectories();
 
         DirectoryIndex d = storage.getByName(name);
-        app.addTask(new ReindexStructure(d));
+        app.addTask(new ReindexStructure(d, app.getConfiguration()));
 
         d.setLastStructureIndexed(LocalDateTime.now());
         storage.setDirectory(d);

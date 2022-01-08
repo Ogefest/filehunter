@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ogefest</groupId>
   <artifactId>filehunter</artifactId>
-  <version>0.5.1</version>
+  <version>0.6</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
@@ -118,17 +118,17 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-tika</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>2.0.204</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mapdb</groupId>
-      <artifactId>mapdb</artifactId>
-      <version>3.0.8</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.h2database</groupId>-->
+<!--      <artifactId>h2</artifactId>-->
+<!--      <version>2.0.204</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
+<!--    <dependency>-->
+<!--      <groupId>org.mapdb</groupId>-->
+<!--      <artifactId>mapdb</artifactId>-->
+<!--      <version>3.0.8</version>-->
+<!--    </dependency>-->
 
 
     <dependency>
@@ -148,13 +148,18 @@
       <groupId>org.jboss.logmanager</groupId>
       <artifactId>log4j2-jboss-logmanager</artifactId>
     </dependency>
-
-
-
     <dependency>
-      <groupId>org.jboss.slf4j</groupId>
-      <artifactId>slf4j-jboss-logmanager</artifactId>
+
+    <groupId>org.xerial</groupId>
+    <artifactId>sqlite-jdbc</artifactId>
+    <version>3.34.0</version>
     </dependency>
+
+
+<!--    <dependency>-->
+<!--      <groupId>org.jboss.slf4j</groupId>-->
+<!--      <artifactId>slf4j-jboss-logmanager</artifactId>-->
+<!--    </dependency>-->
 
 
 

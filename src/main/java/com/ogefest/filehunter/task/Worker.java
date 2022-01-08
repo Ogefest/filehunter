@@ -1,8 +1,6 @@
 package com.ogefest.filehunter.task;
 
 import com.ogefest.filehunter.Configuration;
-import com.ogefest.filehunter.search.IndexRead;
-import com.ogefest.filehunter.search.IndexWrite;
 import com.ogefest.filehunter.storage.Factory;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
 import org.jboss.logging.Logger;
@@ -33,20 +31,21 @@ public class Worker {
 
                 for (Task t : todo) {
                     currentTask = t;
+
                     LOG.info("Task " + t.getClass().getName() + " started");
 
-                    IndexRead indexRead = new IndexRead(conf);
-                    IndexWrite indexWrite = new IndexWrite(conf);
+//                    IndexRead indexRead = new IndexRead(conf);
+//                    IndexWrite indexWrite = new IndexWrite(conf);
                     FileSystemDatabase db = Factory.get(conf);
 
                     currentTask.setConfiguration(conf);
-                    currentTask.setIndexes(indexWrite, indexRead);
+//                    currentTask.setIndexes(indexWrite, indexRead);
                     currentTask.setDatabase(db);
 
                     currentTask.run();
 
-                    indexRead.closeIndex();
-                    indexWrite.closeIndex();
+//                    indexRead.closeIndex();
+//                    indexWrite.closeIndex();
                     db.closeConnection();
 
                     LOG.info("Task " + t.getClass().getName() + " finished");

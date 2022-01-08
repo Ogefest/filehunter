@@ -18,6 +18,7 @@ public class DirectoryIndex {
     private String type;
     private HashMap<String, String> configuration = new HashMap<>();
     private StatusType status = StatusType.UNKNOWN;
+    private int reindexSessionId = 0;
 
     public DirectoryIndex() {
 
@@ -125,5 +126,13 @@ public class DirectoryIndex {
 
     public void setReindexType(ReindexType reindexType) {
         this.reindexType = reindexType;
+    }
+
+    public int getReindexSessionId() {
+        return reindexSessionId;
+    }
+
+    public void setReindexSessionId(int reindexSessionId) {
+        this.reindexSessionId = reindexSessionId;
     }
 }

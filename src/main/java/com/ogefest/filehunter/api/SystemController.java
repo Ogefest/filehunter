@@ -2,7 +2,7 @@ package com.ogefest.filehunter.api;
 
 import com.ogefest.filehunter.App;
 import com.ogefest.filehunter.SystemStatus;
-import com.ogefest.filehunter.search.IndexRead;
+import com.ogefest.filehunter.storage.LuceneSearch;
 import com.ogefest.filehunter.task.Task;
 
 import javax.inject.Inject;
@@ -35,7 +35,7 @@ public class SystemController {
     public SystemStatus status() {
 
         SystemStatus status = new SystemStatus();
-        IndexRead reader = app.getIndexForRead();
+        LuceneSearch reader = app.getIndexForRead();
 
         status.setDocsNumber(reader.getNumDocs());
 

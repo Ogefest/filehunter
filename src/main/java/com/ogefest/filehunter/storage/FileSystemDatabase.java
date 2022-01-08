@@ -11,6 +11,8 @@ public interface FileSystemDatabase {
 
     FileInfo add(String path, FileAttributes attributes, DirectoryIndex index);
 
+    FileInfo add(FileInfo doc);
+
     FileInfo get(String path, DirectoryIndex index);
 
     FileInfo get(String uid);
@@ -25,13 +27,7 @@ public interface FileSystemDatabase {
 
     void setCurrentStatus(FileInfo fi, int counter);
 
-    void setCurrentFTSStatus(FileInfo fi, int ftsStatus);
-
     void setCurrentAttributes(FileInfo fi, FileAttributes attributes);
-
-    ArrayList<FileInfo> getItemsToClear();
-
-    ArrayList<FileInfo> getItemsToFullTextIndex();
 
     void openReindexingSession(int sessionId, DirectoryIndex index);
 

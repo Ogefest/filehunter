@@ -7,7 +7,7 @@ public class Factory {
 
     public static FileSystemDatabase get(Configuration conf) {
         if (db == null) {
-            db = new MapDbFSD(conf);
+            db = new Lucene(conf);
         }
         return db;
     }

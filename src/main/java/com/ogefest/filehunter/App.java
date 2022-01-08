@@ -1,9 +1,9 @@
 package com.ogefest.filehunter;
 
 import com.ogefest.filehunter.index.*;
-import com.ogefest.filehunter.search.IndexRead;
 import com.ogefest.filehunter.storage.FileSystemDatabase;
-import com.ogefest.filehunter.task.ReindexFullText;
+import com.ogefest.filehunter.storage.LuceneSearch;
+import com.ogefest.filehunter.task.IndexMetadata;
 import com.ogefest.filehunter.task.ReindexStructure;
 import com.ogefest.filehunter.task.Task;
 import com.ogefest.filehunter.task.Worker;
@@ -96,8 +96,8 @@ public class App {
             }
 
             if (d.getLastStructureIndexed().plusSeconds(d.getIntervalUpdateStructure()).isBefore(LocalDateTime.now())) {
-                addTask(new ReindexStructure(d));
-                addTask(new ReindexFullText());
+                addTask(new ReindexStructure(d, conf));
+                addTask(new IndexMetadata(d, conf));
 
                 d.setLastStructureIndexed(LocalDateTime.now());
                 storage.setDirectory(d);
@@ -124,8 +124,8 @@ public class App {
 
     }
 
-    public IndexRead getIndexForRead() {
-        return new IndexRead(conf);
+    public LuceneSearch getIndexForRead() {
+        return new LuceneSearch(conf);
     }
 
     public Task getCurrentTaskProcessing() {

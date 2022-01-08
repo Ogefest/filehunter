@@ -97,7 +97,7 @@ public class DirectoryIndexStorage {
 
     }
 
-    private void saveSession() {
+    private synchronized void saveSession() {
 
         FileOutputStream fout = null;
         try {
