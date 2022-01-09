@@ -124,6 +124,8 @@
   {"name" : "com.github.sardine.model.Unlock","allDeclaredConstructors" : true,"allPublicConstructors" : true,"allDeclaredMethods" : true,"allPublicMethods" : true,"allDeclaredClasses" : true,"allPublicClasses" : true},
   {"name" : "com.github.sardine.model.Write","allDeclaredConstructors" : true,"allPublicConstructors" : true,"allDeclaredMethods" : true,"allPublicMethods" : true,"allDeclaredClasses" : true,"allPublicClasses" : true},
   {"name" : "com.github.sardine.model.WriteContent","allDeclaredConstructors" : true,"allPublicConstructors" : true,"allDeclaredMethods" : true,"allPublicMethods" : true,"allDeclaredClasses" : true,"allPublicClasses" : true},
-  {"name" : "com.github.sardine.model.WriteProperties","allDeclaredConstructors" : true,"allPublicConstructors" : true,"allDeclaredMethods" : true,"allPublicMethods" : true,"allDeclaredClasses" : true,"allPublicClasses" : true}
+  {"name" : "com.github.sardine.model.WriteProperties","allDeclaredConstructors" : true,"allPublicConstructors" : true,"allDeclaredMethods" : true,"allPublicMethods" : true,"allDeclaredClasses" : true,"allPublicClasses" : true},
 
+  {"name" : "org.apache.lucene.search.BoostAttribute","allDeclaredConstructors" : true,"allPublicConstructors" : true,"allDeclaredMethods" : true,"allPublicMethods" : true,"allDeclaredClasses" : true,"allPublicClasses" : true},
+  {"name" : "org.apache.lucene.search.BoostAttributeImpl","allDeclaredConstructors" : true,"allPublicConstructors" : true,"allDeclaredMethods" : true,"allPublicMethods" : true,"allDeclaredClasses" : true,"allPublicClasses" : true}
 ]

@@ -76,6 +76,18 @@ public class ReindexStructure extends Task {
 
     protected void walk(FileObject item) throws IOException, ResourceAccessException {
         if (item.getEngineItem().isDirectory()) {
+
+            for (String pathToCheck : index.getIgnorePath()) {
+                if (item.getEngineItem().getPath().indexOf(pathToCheck) == 0) {
+                    return;
+                }
+            }
+            for (String patternToCheck : index.getIgnorePhrase()) {
+                if (item.getEngineItem().getPath().indexOf(patternToCheck) != -1) {
+                    return;
+                }
+            }
+
             LOG.info("Scanning " + item.getEngineName() + ":" + item.getEngineItem().getPath());
             ArrayList<FileObject> itemsToCheck = ucfs.list(item);
             for (FileObject obj : itemsToCheck) {

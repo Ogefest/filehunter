@@ -142,6 +142,7 @@ public class Lucene implements FileSystemDatabase {
         doc.add(new StringField("indexname", fi.getIndexName(), Field.Store.YES));
         doc.add(new TextField("content", fi.getFileAttributes().getContent(), Field.Store.YES));
 
+        LOG.debug("Doc add " + fi.getPath());
         try {
             writer.addDocument(doc);
         } catch (IOException e) {

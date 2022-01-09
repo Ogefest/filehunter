@@ -12,6 +12,7 @@ import com.ogefest.unifiedcloudfilesystem.FileObject;
 import com.ogefest.unifiedcloudfilesystem.UnifiedCloudFileSystem;
 import io.quarkus.tika.TikaParseException;
 import io.quarkus.tika.TikaParser;
+import org.apache.log4j.Level;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.parser.AutoDetectParser;
 import org.jboss.logging.Logger;
@@ -39,6 +40,21 @@ public class IndexMetadata extends Task {
         this.conf = conf;
 
         contentExtensions = new ArrayList<>(Arrays.asList("pdf", "doc", "docx", "xls", "xlsx", "odt", "rtf", "txt", "csv"));
+
+        java.util.logging.Logger
+                .getLogger("org.apache.pdfbox").setLevel(java.util.logging.Level.OFF);
+
+
+        String[] loggers = { "org.apache.pdfbox.util.PDFStreamEngine",
+                "org.apache.pdfbox.pdmodel.font.PDSimpleFont",
+                "org.apache.pdfbox.pdmodel.font.PDFont",
+                "org.apache.pdfbox.pdmodel.font.FontManager",
+                "org.apache.pdfbox.pdfparser.PDFObjectStreamParser" };
+        for (String logger : loggers) {
+            org.apache.log4j.Logger logpdfengine = org.apache.log4j.Logger
+                    .getLogger(logger);
+            logpdfengine.setLevel(Level.FATAL);
+        }
     }
 
     @Override
