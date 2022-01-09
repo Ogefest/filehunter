@@ -19,6 +19,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Path("/download")
 public class DownloadController {
@@ -62,11 +63,14 @@ public class DownloadController {
 
         try {
 
-            Response.ResponseBuilder response = Response.ok(ucfs.read(obj));
+            InputStream in = ucfs.read(obj);
+            Response.ResponseBuilder response = Response.ok(in);
+            response.header("Content-length", in.available());
+            response.header("Content-Disposition", "attachment;filename=" + obj.getEngineItem().getName());
+
             if (MimeUtils.hasExtension(obj.getEngineItem().getExt())) {
                 response.type(MimeUtils.guessMimeTypeFromExtension(obj.getEngineItem().getExt()));
             } else {
-                response.header("Content-Disposition", "attachment;filename=" + obj.getEngineItem().getName());
                 response.type(MediaType.APPLICATION_OCTET_STREAM);
             }
 
@@ -109,7 +113,11 @@ public class DownloadController {
 
         try {
 
-            Response.ResponseBuilder response = Response.ok(ucfs.read(obj));
+            InputStream in = ucfs.read(obj);
+            Response.ResponseBuilder response = Response.ok(in);
+            response.header("Content-length", in.available());
+            response.header("Content-Disposition", "inline;filename=" + obj.getEngineItem().getName());
+
             if (MimeUtils.hasExtension(obj.getEngineItem().getExt())) {
                 response.type(MimeUtils.guessMimeTypeFromExtension(obj.getEngineItem().getExt()));
             } else {
