@@ -76,9 +76,14 @@ public class IndexMetadata extends Task {
 
         LuceneSearch search = new LuceneSearch(conf);
 
-        String q = "tometareindex:1 AND type:f";
+        String q = "tometareindex:t AND type:f";
         ArrayList<FileInfo> docsToReindex = search.queryByRawQuery(q, Integer.MAX_VALUE);
+        int docsProcessed = 0;
         for (FileInfo fi : docsToReindex) {
+            docsProcessed++;
+            if (docsProcessed % 1000 == 0) {
+                LOG.info("Meta reindex progress " + docsProcessed + "/" + docsToReindex.size());
+            }
 
             String content = getContent(fi);
 
@@ -107,11 +112,7 @@ public class IndexMetadata extends Task {
         FileObject fo = ucfs.getByPath(fi.getIndexName(), fi.getPath());
         try {
             return plainContent(ucfs.read(fo));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (TikaException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return "";

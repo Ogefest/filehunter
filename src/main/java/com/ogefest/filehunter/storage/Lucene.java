@@ -127,12 +127,12 @@ public class Lucene implements FileSystemDatabase {
 
         if (extractMetadataInFileIndex) {
             if (fi.getLastMetaIndexed().isBefore(fi.getLastModified())) {
-                doc.add(new StringField("tometareindex", "1", Field.Store.YES));
+                doc.add(new StringField("tometareindex", "t", Field.Store.YES));
             } else {
-                doc.add(new StringField("tometareindex", "0", Field.Store.YES));
+                doc.add(new StringField("tometareindex", "f", Field.Store.YES));
             }
         } else {
-            doc.add(new StringField("tometareindex", "0", Field.Store.YES));
+            doc.add(new StringField("tometareindex", "t", Field.Store.YES));
         }
 
         doc.add(new TextField("name", fi.getName(), Field.Store.YES));
@@ -144,8 +144,18 @@ public class Lucene implements FileSystemDatabase {
 
         LOG.debug("Doc add " + fi.getPath());
         try {
+
+            Analyzer analyzer = new FHAnalyzer();
+            QueryParser parser = new QueryParser("ident", analyzer);
+            String queryToCleanup = "ident:" + fi.getId() + " AND indexname:" + fi.getIndexName();
+            Query query = parser.parse(queryToCleanup);
+            writer.deleteDocuments(query);
             writer.addDocument(doc);
+
+            writer.commit();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
             e.printStackTrace();
         }
     }
@@ -282,6 +292,7 @@ public class Lucene implements FileSystemDatabase {
         Query query = null;
         try {
             query = parser.parse(queryToCleanup);
+            writer.commit();
             writer.deleteDocuments(query);
 
             writer.commit();

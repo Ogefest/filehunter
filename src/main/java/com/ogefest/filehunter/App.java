@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-//@ApplicationScoped
 @Singleton
 public class App {
 
