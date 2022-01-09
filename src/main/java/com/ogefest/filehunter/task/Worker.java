@@ -20,7 +20,7 @@ public class Worker {
     }
 
     public void run(ArrayList<Task> todo) {
-        if (isBusy) {
+        if (thread != null && thread.isAlive()) {
             return;
         }
 
@@ -53,11 +53,11 @@ public class Worker {
 
                 }
 
-                isBusy = false;
+//                isBusy = false;
 
             }
         });
-        isBusy = true;
+//        isBusy = true;
 
         thread.setName("Task queue worker");
         thread.start();
@@ -68,11 +68,14 @@ public class Worker {
     }
 
     public boolean isBusy() {
-        if (thread == null || thread.isInterrupted()) {
-            isBusy = false;
+        if (thread == null) {
+            return false;
+        }
+        if (thread.isAlive()) {
+            return true;
         }
 
-        return isBusy;
+        return false;
     }
 
 }

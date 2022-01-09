@@ -113,6 +113,9 @@ public class App {
         if (tasks.size() == 0) {
             return;
         }
+        if (taskWorker.isBusy()) {
+            return;
+        }
 
         ArrayList<Task> todo = new ArrayList<>();
         todo.addAll(tasks);
