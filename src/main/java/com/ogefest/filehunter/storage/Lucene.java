@@ -34,6 +34,7 @@ public class Lucene implements FileSystemDatabase {
     private Configuration conf;
     private long sessionId = 0;
     private DirectoryIndexStorage indexStorage;
+    private int docAddCounter = 0;
 
     public Lucene(Configuration conf) {
         this.conf = conf;
@@ -103,6 +104,23 @@ public class Lucene implements FileSystemDatabase {
 
     private void setDocument(FileInfo fi) {
 
+//        docAddCounter++;
+//        if (docAddCounter % 1000 == 0) {
+//            LOG.debug("Clean up directory with deleteUnusedFiles");
+//            try {
+//
+//                writer.commit();
+////                writer.close();
+//                writer.forceMergeDeletes();
+//                writer.forceMerge(1);
+//                writer.commit();
+//                writer.deleteUnusedFiles();
+//                writer.commit();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
         boolean extractMetadataInFileIndex = false;
         if (indexStorage.getByName(fi.getIndexName()).isExtractMetadata()) {
             extractMetadataInFileIndex = true;
@@ -167,7 +185,7 @@ public class Lucene implements FileSystemDatabase {
         try {
             DirectoryReader directoryReader;
             if (writer != null && writer.isOpen()) {
-                directoryReader = DirectoryReader.open(writer);
+                directoryReader = DirectoryReader.open(writer, true, true);
             } else {
                 directoryReader = DirectoryReader.open(FSDirectory.open(Paths.get(conf.getValue("storage.directory"))));
             }
@@ -183,6 +201,10 @@ public class Lucene implements FileSystemDatabase {
                 Document doc = searcher.doc(scoreDoc.doc);
                 result.add(new FileInfoLucene(doc));
             }
+
+
+            directoryReader.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ParseException e) {
@@ -268,10 +290,15 @@ public class Lucene implements FileSystemDatabase {
             Analyzer analyzer = new FHAnalyzer();
             FSDirectory storage = FSDirectory.open(Paths.get(conf.getValue("storage.directory")));
 
+
             IndexWriterConfig iwc = new IndexWriterConfig(analyzer);
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-            iwc.setMaxBufferedDocs(10000);
+
+            iwc.setMaxBufferedDocs(1000);
             iwc.setRAMBufferSizeMB(1024);
+//            iwc.setMaxBufferedDocs(10);
+//            iwc.setRAMBufferSizeMB(5);
+
 
             writer = new IndexWriter(storage, iwc);
 
