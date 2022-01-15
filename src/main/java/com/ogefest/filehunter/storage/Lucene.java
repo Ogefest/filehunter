@@ -340,7 +340,7 @@ public class Lucene implements FileSystemDatabase {
     @Override
     public void closeConnection() {
         try {
-            if (writer.isOpen()) {
+            if (writer != null && writer.isOpen()) {
                 writer.close();
             }
         } catch (IOException e) {
