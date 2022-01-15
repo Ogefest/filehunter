@@ -78,12 +78,12 @@ public class ReindexStructure extends Task {
         if (item.getEngineItem().isDirectory()) {
 
             for (String pathToCheck : index.getIgnorePath()) {
-                if (item.getEngineItem().getPath().indexOf(pathToCheck) == 0) {
+                if (pathToCheck.length() > 0 && item.getEngineItem().getPath().indexOf(pathToCheck) == 0) {
                     return;
                 }
             }
             for (String patternToCheck : index.getIgnorePhrase()) {
-                if (item.getEngineItem().getPath().indexOf(patternToCheck) != -1) {
+                if (patternToCheck.length() > 0 && item.getEngineItem().getPath().indexOf(patternToCheck) != -1) {
                     return;
                 }
             }
