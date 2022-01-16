@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DirectoryIndex {
     private String name;
@@ -53,7 +55,8 @@ public class DirectoryIndex {
     }
 
     public void setIgnorePath(ArrayList<String> ignorePath) {
-        this.ignorePath = ignorePath;
+        List<String> tmp = ignorePath.stream().filter(item -> item.trim().length() > 0).collect(Collectors.toList());
+        this.ignorePath = new ArrayList<>(tmp);
     }
 
     public ArrayList<String> getIgnorePhrase() {
@@ -61,7 +64,8 @@ public class DirectoryIndex {
     }
 
     public void setIgnorePhrase(ArrayList<String> ignorePhrase) {
-        this.ignorePhrase = ignorePhrase;
+        List<String> tmp = ignorePhrase.stream().filter(item -> item.trim().length() > 0).collect(Collectors.toList());
+        this.ignorePhrase = new ArrayList<>(tmp);
     }
 
     public ArrayList<String> getIgnoreExtension() {
@@ -69,7 +73,9 @@ public class DirectoryIndex {
     }
 
     public void setIgnoreExtension(ArrayList<String> ignoreExtension) {
-        this.ignoreExtension = ignoreExtension;
+        List<String> tmp = ignoreExtension.stream().filter(item -> item.trim().length() > 0).collect(Collectors.toList());
+
+        this.ignoreExtension = new ArrayList<>(tmp);
     }
 
     public int getIntervalUpdateStructure() {
@@ -93,7 +99,6 @@ public class DirectoryIndex {
             return LocalDateTime.of(2000, 1, 1, 0, 0);
         }
         return LocalDateTime.parse(lastStructureIndexed, DateTimeFormatter.ISO_DATE_TIME);
-//        return lastStructureIndexed;
     }
 
     public void setLastStructureIndexed(LocalDateTime lastStructureIndexed) {
@@ -105,7 +110,6 @@ public class DirectoryIndex {
             return LocalDateTime.of(2000, 1, 1, 0, 0);
         }
         return LocalDateTime.parse(lastMetadataIndexed, DateTimeFormatter.ISO_DATE_TIME);
-//        return lastMetadataIndexed;
     }
 
     public void setLastMetadataIndexed(LocalDateTime lastMetadataIndexed) {
