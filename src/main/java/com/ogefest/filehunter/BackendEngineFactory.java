@@ -2,10 +2,7 @@ package com.ogefest.filehunter;
 
 import com.ogefest.unifiedcloudfilesystem.Engine;
 import com.ogefest.unifiedcloudfilesystem.EngineConfiguration;
-import com.ogefest.unifiedcloudfilesystem.engine.FileSystem;
-import com.ogefest.unifiedcloudfilesystem.engine.Ftp;
-import com.ogefest.unifiedcloudfilesystem.engine.S3;
-import com.ogefest.unifiedcloudfilesystem.engine.WebDav;
+import com.ogefest.unifiedcloudfilesystem.engine.*;
 
 import java.io.IOException;
 
@@ -28,6 +25,9 @@ public class BackendEngineFactory {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        if (name.equals("nfs")) {
+            return new Nfs(ec);
         }
 
         return null;

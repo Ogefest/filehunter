@@ -75,6 +75,9 @@ public class UnifiedCloudFileSystem {
     }
 
     public boolean exists(FileObject item) throws IOException {
+        if (item == null) {
+            return false;
+        }
         return engineRegistry.get(item.getEngineName()).exists(item.getEngineItem());
     }
 
@@ -116,16 +119,16 @@ public class UnifiedCloudFileSystem {
                         return item;
                     }
                 }
-                return null;
+                return new FileObject(engineName, new EngineItem(path));
             }
-            return null;
+            return new FileObject(engineName, new EngineItem(path));
 
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ResourceAccessException e) {
             e.printStackTrace();
         }
-        return null;
+        return new FileObject(engineName, new EngineItem(path));
     }
 
 }
