@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.ogefest</groupId>
   <artifactId>filehunter</artifactId>
-  <version>0.6</version>
+  <version>0.6.1</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <maven.compiler.parameters>true</maven.compiler.parameters>
