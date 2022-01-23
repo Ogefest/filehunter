@@ -8,4 +8,6 @@ webdav.url =
 webdav.username =
 webdav.password = 
 
+nfs.host =
+nfs.path =
 
