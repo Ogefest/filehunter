@@ -77,9 +77,9 @@ public class Lucene implements FileSystemDatabase {
             writer.deleteDocuments(query);
             writer.commit();
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOG.error("Unable to parse query " + queryToCleanup, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error", e);
         }
     }
 
@@ -172,9 +172,9 @@ public class Lucene implements FileSystemDatabase {
 
             writer.commit();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error", e);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOG.error("Unable to parse query", e);
         }
     }
 
@@ -206,9 +206,9 @@ public class Lucene implements FileSystemDatabase {
             directoryReader.close();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Error", e);
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOG.error("Unable to parse query " + q, e);
         }
 
         return result;
@@ -296,14 +296,11 @@ public class Lucene implements FileSystemDatabase {
 
             iwc.setMaxBufferedDocs(1000);
             iwc.setRAMBufferSizeMB(1024);
-//            iwc.setMaxBufferedDocs(10);
-//            iwc.setRAMBufferSizeMB(5);
-
 
             writer = new IndexWriter(storage, iwc);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Unable to open session", e);
         }
 
     }
@@ -328,9 +325,9 @@ public class Lucene implements FileSystemDatabase {
             writer.close();
 
         } catch (ParseException e) {
-            e.printStackTrace();
+            LOG.error("Unable to parse query " + queryToCleanup, e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Could not close writer", e);
         }
 
         closeConnection();
@@ -344,7 +341,7 @@ public class Lucene implements FileSystemDatabase {
                 writer.close();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Unable to close writer", e);
         }
     }
 }
