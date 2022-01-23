@@ -10,6 +10,14 @@ import java.util.Properties;
 public class Configuration {
     private String filename;
     private HashMap<String, String> configuration = new HashMap<>();
+    private static String[] args = null;
+
+    public static void setArgs(String[] args) {
+        if (Configuration.args == null) {
+            return;
+        }
+        Configuration.args = args;
+    }
 
     public Configuration() {
 
@@ -31,6 +39,23 @@ public class Configuration {
                 configuration.put(key.substring(11), envs.get(key));
             }
         }
+
+        if (args != null) {
+            for (int i = 0; i < args.length; i++) {
+                if (!args[i].startsWith("--")) {
+                    continue;
+                }
+                if (args[i].indexOf("=") == -1) {
+                    continue;
+                }
+
+                String[] tmp = args[i].trim().split("=");
+                configuration.put(tmp[0].trim(), tmp[1].trim());
+                System.out.println(tmp[0] + " = " + tmp[1]);
+
+            }
+        }
+
 
     }
 
