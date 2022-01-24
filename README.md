@@ -15,7 +15,7 @@ are stored on multiple hosts with multiple directories.
 
 ## Get started
 0. Java 11 or higher is required to run `FileHunter`
-1. Download the latest version from releases in Github
+1. Download the latest version from [releases in Github](https://github.com/Ogefest/filehunter/releases)
 2. Create separate directory where you put jar file
 3. Run `java -jar filehunter-<version>.jar`
 4. Open in browser `http://<HOST_IP>:8034`
